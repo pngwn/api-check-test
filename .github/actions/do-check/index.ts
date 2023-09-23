@@ -4,7 +4,7 @@ import { getInput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 
 async function run() {
-	const token = getInput("token");
+	const token = getInput("github-token");
 	const octokit = getOctokit(token);
 
 	octokit.rest.repos.createCommitStatus({
