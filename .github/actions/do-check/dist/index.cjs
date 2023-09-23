@@ -12542,28 +12542,32 @@ async function run() {
     repo: import_github.context.repo.repo,
     sha,
     state: "success",
-    description: "This is a passing test"
+    description: "This is a passing test",
+    context: "check/passing"
   });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
     repo: import_github.context.repo.repo,
     sha,
     state: "failure",
-    description: "This is a failing test"
+    description: "This is a failing test",
+    context: "check/failing"
   });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
     repo: import_github.context.repo.repo,
     sha,
     state: "error",
-    description: "This is an error test"
+    description: "This is an error test",
+    context: "check/error"
   });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
     repo: import_github.context.repo.repo,
     sha,
     state: "pending",
-    description: "This is a pending test"
+    description: "This is a pending test",
+    context: "check/pending"
   });
 }
 run();
