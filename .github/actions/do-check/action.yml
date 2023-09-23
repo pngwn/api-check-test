@@ -1,0 +1,13 @@
+name: "Create a check with a status on a PR"
+
+inputs:
+  github-token:
+    description: Github token"
+    required: true
+  pr-number:
+    description: "PR number"
+    required: true
+
+runs:
+  using: "node16"
+  main: "dist/index.cjs"
