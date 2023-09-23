@@ -11490,7 +11490,7 @@ var import_core = __toESM(require_core());
 var import_github = __toESM(require_github());
 console.log("hello");
 async function run() {
-  const token = (0, import_core.getInput)("token");
+  const token = (0, import_core.getInput)("github-token");
   const octokit = (0, import_github.getOctokit)(token);
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
