@@ -28,6 +28,7 @@ async function run() {
 		sha,
 		state: "success",
 		description: "This is a passing test",
+		context: "check/passing",
 	});
 
 	octokit.rest.repos.createCommitStatus({
@@ -36,6 +37,7 @@ async function run() {
 		sha,
 		state: "failure",
 		description: "This is a failing test",
+		context: "check/failing",
 	});
 
 	octokit.rest.repos.createCommitStatus({
@@ -44,6 +46,7 @@ async function run() {
 		sha,
 		state: "error",
 		description: "This is an error test",
+		context: "check/error",
 	});
 
 	octokit.rest.repos.createCommitStatus({
@@ -52,6 +55,7 @@ async function run() {
 		sha,
 		state: "pending",
 		description: "This is a pending test",
+		context: "check/pending",
 	});
 }
 
