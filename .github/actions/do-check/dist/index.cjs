@@ -12543,7 +12543,8 @@ async function run() {
     sha,
     state: "success",
     description: "This is a passing test",
-    context: "check/passing"
+    context: "check/passing",
+    target_url: "https://google.com"
   });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
@@ -12551,7 +12552,8 @@ async function run() {
     sha,
     state: "failure",
     description: "This is a failing test",
-    context: "check/failing"
+    context: "check/failing",
+    target_url: "https://google.com"
   });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
@@ -12559,7 +12561,8 @@ async function run() {
     sha,
     state: "error",
     description: "This is an error test",
-    context: "check/error"
+    context: "check/error",
+    target_url: "https://google.com"
   });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
@@ -12567,7 +12570,8 @@ async function run() {
     sha,
     state: "pending",
     description: "This is a pending test",
-    context: "check/pending"
+    context: "check/pending",
+    target_url: "https://google.com"
   });
 }
 run();

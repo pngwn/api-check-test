@@ -29,6 +29,7 @@ async function run() {
 		state: "success",
 		description: "This is a passing test",
 		context: "check/passing",
+		target_url: "https://google.com",
 	});
 
 	octokit.rest.repos.createCommitStatus({
@@ -38,6 +39,7 @@ async function run() {
 		state: "failure",
 		description: "This is a failing test",
 		context: "check/failing",
+		target_url: "https://google.com",
 	});
 
 	octokit.rest.repos.createCommitStatus({
@@ -47,6 +49,7 @@ async function run() {
 		state: "error",
 		description: "This is an error test",
 		context: "check/error",
+		target_url: "https://google.com",
 	});
 
 	octokit.rest.repos.createCommitStatus({
@@ -56,6 +59,7 @@ async function run() {
 		state: "pending",
 		description: "This is a pending test",
 		context: "check/pending",
+		target_url: "https://google.com",
 	});
 }
 
