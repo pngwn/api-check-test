@@ -1,0 +1,13 @@
+name: workflow-trigger
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trigger:
+    name: "Trigger"
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Triggering workflow"
