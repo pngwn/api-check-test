@@ -1,0 +1,25 @@
+name: workflow-run
+
+on:
+  workflow_run:
+    workflows: [workflow-trigger]
+
+jobs:
+  trigger:
+    name: "Trigger"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Get PR number"
+        id: pr
+        uses: "gradio-app/github/actions/find-pr@main"
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ steps.pr.outputs.source_repo }}
+          ref: ${{ steps.pr.outputs.source_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Print PR number"
+        run: echo ${{ steps.pr.outputs.pr_number }}

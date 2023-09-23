@@ -1,0 +1,17 @@
+{
+  "name": "api-check-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-action": "esbuild .github/actions/do-check/index.ts --bundle --platform=node --outfile=.github/actions/do-check/dist/index.cjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^5.1.1",
+    "esbuild": "^0.19.3"
+  }
+}
