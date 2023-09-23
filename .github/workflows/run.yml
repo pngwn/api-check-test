@@ -4,6 +4,9 @@ on:
   workflow_run:
     workflows: [workflow-trigger]
 
+permissions:
+  statuses: write
+
 jobs:
   trigger:
     name: "Trigger"
