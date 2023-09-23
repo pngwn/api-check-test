@@ -26,6 +26,10 @@ jobs:
 
       - name: "Print PR number"
         run: echo ${{ steps.pr.outputs.pr_number }}
+      - name: "Print source repo"
+        run: echo ${{ steps.pr.outputs.source_repo }}
+      - name: "Print source branch"
+        run: echo ${{ steps.pr.outputs.source_branch }}
       - name: do check
         uses: "./.github/actions/do-check"
         with:

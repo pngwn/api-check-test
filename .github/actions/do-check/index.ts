@@ -2,15 +2,30 @@ console.log("hello");
 
 import { getInput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
+import { exec } from "@actions/exec";
 
 async function run() {
 	const token = getInput("github-token");
 	const octokit = getOctokit(token);
 
+	let output = "";
+	await exec("git", ["rev-parse", "HEAD"], {
+		listeners: {
+			stdout: (data) => {
+				output = data.toString();
+			},
+			stderr: (data) => {
+				console.log(`stderr: ${data.toString()}`);
+			},
+		},
+	});
+
+	const sha = output.trim();
+
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
-		sha: context.sha,
+		sha,
 		state: "success",
 		description: "This is a passing test",
 	});
@@ -18,7 +33,7 @@ async function run() {
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
-		sha: context.sha,
+		sha,
 		state: "failure",
 		description: "This is a failing test",
 	});
@@ -26,7 +41,7 @@ async function run() {
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
-		sha: context.sha,
+		sha,
 		state: "error",
 		description: "This is an error test",
 	});
@@ -34,7 +49,7 @@ async function run() {
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
-		sha: context.sha,
+		sha,
 		state: "pending",
 		description: "This is a pending test",
 	});
