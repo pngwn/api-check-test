@@ -22,6 +22,16 @@ async function run() {
 
 	const sha = output.trim();
 
+	console.log(context.payload.workflow_run);
+
+	const wf = await octokit.rest.actions.getWorkflowRun({
+		owner: context.repo.owner,
+		repo: context.repo.repo,
+		run_id: context.payload.workflow_run.id,
+	});
+
+	console.log(JSON.stringify(wf.data, null, 2));
+
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
 		repo: context.repo.repo,

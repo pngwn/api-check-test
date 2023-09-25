@@ -12537,6 +12537,13 @@ async function run() {
     }
   });
   const sha = output.trim();
+  console.log(import_github.context.payload.workflow_run);
+  const wf = await octokit.rest.actions.getWorkflowRun({
+    owner: import_github.context.repo.owner,
+    repo: import_github.context.repo.repo,
+    run_id: import_github.context.payload.workflow_run.id
+  });
+  console.log(JSON.stringify(wf.data, null, 2));
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
     repo: import_github.context.repo.repo,
