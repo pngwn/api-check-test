@@ -1,0 +1,56 @@
+name: python/test
+
+on:
+  workflow_run:
+    workflows: [workflow-trigger]
+
+permissions:
+  statuses: write
+
+jobs:
+  test_one:
+    name: "Test one"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Get PR number"
+        id: pr
+        uses: "gradio-app/github/actions/find-pr@main"
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ steps.pr.outputs.source_repo }}
+          ref: ${{ steps.pr.outputs.source_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Print PR number"
+        run: echo ${{ steps.pr.outputs.pr_number }}
+      - name: "Print source repo"
+        run: echo ${{ steps.pr.outputs.source_repo }}
+      - name: "Print source branch"
+        run: echo ${{ steps.pr.outputs.source_branch }}
+  test_two:
+    name: "Test two"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Get PR number"
+        id: pr
+        uses: "gradio-app/github/actions/find-pr@main"
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ steps.pr.outputs.source_repo }}
+          ref: ${{ steps.pr.outputs.source_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Print PR number"
+        run: echo ${{ steps.pr.outputs.pr_number }}
+      - name: "Print source repo"
+        run: echo ${{ steps.pr.outputs.source_repo }}
+      - name: "Print source branch"
+        run: echo ${{ steps.pr.outputs.source_branch }}
+      - name: error
+        run: exit 1

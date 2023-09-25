@@ -2,7 +2,7 @@ name: workflow-run
 
 on:
   workflow_run:
-    workflows: [workflow-trigger]
+    workflows: [python/test]
 
 permissions:
   statuses: write
