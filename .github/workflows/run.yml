@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Get PR number"
-        id: pr
         uses: "gradio-app/github/actions/find-pr@main"
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
