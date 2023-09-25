@@ -3,6 +3,7 @@ name: workflow-run
 on:
   workflow_run:
     workflows: [python/test]
+    types: [completed]
 
 permissions:
   statuses: write
