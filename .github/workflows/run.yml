@@ -13,24 +13,11 @@ jobs:
     name: "Trigger"
     runs-on: ubuntu-latest
     steps:
-      - name: download data
-        uses: actions/download-artifact@v2
-
-        with:
-          name: pr-data-${{ github.event.workflow_run.id }}
-          path: metadata.json
-      - name: "set metadata.json as output"
+      - name: "Get PR number"
         id: pr
-        uses: actions/github-script@v3
+        uses: "gradio-app/github/actions/find-pr@main"
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const data = require("./metadata.json");
-            return {
-              pr_number: data.pr_number,
-              source_repo: data.source_repo,
-              source_branch: data.source_branch,
-            }
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/checkout@v3
         with:
