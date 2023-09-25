@@ -40,7 +40,7 @@ jobs:
       - name: Upload data
         uses: actions/upload-artifact@v2
         with:
-          name: pr-data-${{ github.event.workflow.id }}
+          name: pr-data-${{ github.run_id }}
           path: metadata.json
   test_one:
     name: "Test one"
