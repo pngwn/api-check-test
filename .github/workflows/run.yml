@@ -13,10 +13,6 @@ jobs:
     name: "Trigger"
     runs-on: ubuntu-latest
     steps:
-      - name: "Get PR number"
-        uses: "gradio-app/github/actions/find-pr@main"
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: download data
         uses: actions/download-artifact@v2
 
