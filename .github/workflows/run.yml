@@ -12,11 +12,25 @@ jobs:
     name: "Trigger"
     runs-on: ubuntu-latest
     steps:
-      - name: "Get PR number"
-        id: pr
-        uses: "gradio-app/github/actions/find-pr@main"
+      - name: Upload data
+        uses: actions/download-artifact@v2
+
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          name: pr-data-${{ github.event.workflow_run.id }}
+          path: metadata.json
+      - name: "set metadata.json as output"
+        id: pr
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const data = require("./metadata.json");
+            return {
+              pr_number: data.pr_number,
+              source_repo: data.source_repo,
+              source_branch: data.source_branch,
+            }
+
       - uses: actions/checkout@v3
         with:
           repository: ${{ steps.pr.outputs.source_repo }}
