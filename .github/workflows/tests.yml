@@ -3,6 +3,8 @@ name: python/test
 on:
   workflow_run:
     workflows: [workflow-trigger]
+    types:
+      - completed
 
 permissions:
   statuses: write
