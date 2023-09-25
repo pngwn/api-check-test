@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: [workflow-trigger]
     types:
-      - completed
+      - requested
 
 permissions:
   statuses: write
