@@ -55,6 +55,12 @@ jobs:
           ref: ${{ needs.get_pr.outputs.source_branch }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: do check
+        uses: "./.github/actions/do-check"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # pr: ${{ steps.pr.outputs.pr_number }}
+
   test_two:
     name: "Test two"
     runs-on: ubuntu-latest
