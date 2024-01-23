@@ -38,8 +38,3 @@ jobs:
           python -m pip list
           echo $PATH
           python -c 'import gradio; print(gradio.__version__)'
-      - name: do check
-        uses: "./.github/actions/do-check"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # pr: ${{ steps.pr.outputs.pr_number }}
