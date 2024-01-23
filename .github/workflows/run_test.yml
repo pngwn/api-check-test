@@ -1,20 +1,13 @@
-name: workflow-trigger
+name: test
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    # types: [opened, synchronize, reopened, edited, labeled, unlabeled]
-    branches:
-      - main
-  # issue_comment:
-  #   types: [edited]
+  workflow_run:
+    workflows: ["trigger pr change"]
+    branches: [main]
+    types: [completed]
 
 jobs:
-  build:
-    permissions: write-all
-    name: build
-    runs-on: ubuntu-22.04
+  test:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -36,4 +29,17 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
-          #  hi
+
+      - name: Activate virtual environment
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          source .venv/bin/activate
+          which python
+          python -m pip list
+          echo $PATH
+          python -c 'import gradio; print(gradio.__version__)'
+      - name: do check
+        uses: "./.github/actions/do-check"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # pr: ${{ steps.pr.outputs.pr_number }}
