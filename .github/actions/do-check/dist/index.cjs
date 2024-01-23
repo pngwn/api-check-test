@@ -12544,10 +12544,37 @@ async function run() {
     run_id: import_github.context.payload.workflow_run.id
   });
   console.log(JSON.stringify(wf.data, null, 2));
-  console.log({
-    workflow_name: wf.data.name,
-    conclusion: wf.data.conclusion,
-    status: wf.data.status
+  const _workflow_name = wf.data.name || "Unknown Workflow";
+  const _conclusion = wf.data.conclusion;
+  const _status = wf.data.status;
+  let state = "pending";
+  if (_status === "completed") {
+    if (_conclusion === "success") {
+      state = "success";
+    } else if (_conclusion === "failure") {
+      state = "failure";
+    } else if (_conclusion === "cancelled") {
+      state = "pending";
+    } else if (_conclusion === "skipped") {
+      state = "success";
+    } else if (_conclusion === "timed_out") {
+      state = "failure";
+    } else {
+      state = "error";
+    }
+  }
+  if (_status === "queued" || _status === "in_progress") {
+    state = "pending";
+  }
+  console.log({ state, _status, _conclusion, _workflow_name });
+  octokit.rest.repos.createCommitStatus({
+    owner: import_github.context.repo.owner,
+    repo: import_github.context.repo.repo,
+    sha,
+    state,
+    description: "This is a passing test",
+    context: _workflow_name,
+    target_url: "https://google.com"
   });
 }
 run();
