@@ -10,6 +10,9 @@ inputs:
   sha:
     description: "SHA of the commit to create the check on"
     required: true
+  result:
+    description: "Result of the check"
+    required: true
 
 runs:
   using: "node16"
