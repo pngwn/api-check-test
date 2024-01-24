@@ -1,28 +1,18 @@
-console.log("hello");
-
 import { getInput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
-import { exec } from "@actions/exec";
 
 async function run() {
-	const token = getInput("github-token");
+	const token = getInput("token");
+	const pr = getInput("pr");
+	const sha = getInput("sha");
 	const octokit = getOctokit(token);
 
-	let output = "";
-	await exec("git", ["rev-parse", "HEAD"], {
-		listeners: {
-			stdout: (data) => {
-				output = data.toString();
-			},
-			stderr: (data) => {
-				console.log(`stderr: ${data.toString()}`);
-			},
-		},
-	});
-
-	const sha = output.trim();
+	if (context.eventName === "workflow_run") {
+	}
 
 	console.log(context.payload.workflow_run);
+
+	const conclusion = context.payload.workflow_run.conclusion;
 
 	const wf = await octokit.rest.actions.getWorkflowRun({
 		owner: context.repo.owner,
@@ -32,22 +22,23 @@ async function run() {
 
 	console.log(JSON.stringify(wf.data, null, 2));
 
-	const _workflow_name = wf.data.name || "Unknown Workflow";
-	const _conclusion = wf.data.conclusion;
-	const _status = wf.data.status;
+	// const _workflow_name = wf.data.name || "Unknown Workflow";
+	const _workflow_name =
+		context.payload.workflow_run.name || "Unknown Workflow";
+	const _status = context.payload.workflow_run.status;
 
 	let state: "pending" | "success" | "failure" | "error" = "pending";
 
 	if (_status === "completed") {
-		if (_conclusion === "success") {
+		if (conclusion === "success") {
 			state = "success";
-		} else if (_conclusion === "failure") {
+		} else if (conclusion === "failure") {
 			state = "failure";
-		} else if (_conclusion === "cancelled") {
+		} else if (conclusion === "cancelled") {
 			state = "pending";
-		} else if (_conclusion === "skipped") {
+		} else if (conclusion === "skipped") {
 			state = "success";
-		} else if (_conclusion === "timed_out") {
+		} else if (conclusion === "timed_out") {
 			state = "failure";
 		} else {
 			state = "error";
@@ -58,7 +49,7 @@ async function run() {
 		state = "pending";
 	}
 
-	console.log({ state, _status, _conclusion, _workflow_name });
+	console.log({ state, _status, conclusion, _workflow_name });
 
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
