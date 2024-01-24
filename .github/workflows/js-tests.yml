@@ -51,4 +51,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pr: ${{ needs.test.outputs.pr_number }}
           sha: ${{ needs.test.outputs.sha }}
-          outcome: ${{ needs.test.result }}
+          result: ${{ needs.test.result }}
