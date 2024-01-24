@@ -54,7 +54,7 @@ async function run() {
 					sha,
 					state: "pending",
 					description: "Running checks",
-					context: _workflow_name,
+					context: run,
 					target_url: "https://google.com",
 				}),
 			),
