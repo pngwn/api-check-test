@@ -1,9 +1,6 @@
 name: workflow-run
 
-on:
-  workflow_run:
-    workflows: ["python / test", "js / test"]
-    types: [requested, completed]
+on: release
 
 permissions:
   statuses: write
