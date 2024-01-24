@@ -1,4 +1,4 @@
-name: "js / test"
+name: "test / test"
 
 on:
   workflow_run:
