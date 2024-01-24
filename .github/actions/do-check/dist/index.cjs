@@ -11512,7 +11512,7 @@ async function run() {
       state = "error";
     }
   }
-  if (_status === "queued" || _status === "in_progress") {
+  if (result === "pendin") {
     state = "pending";
   }
   console.log({ state, _status, result, _workflow_name });

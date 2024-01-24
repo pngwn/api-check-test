@@ -31,7 +31,7 @@ async function run() {
 		}
 	}
 
-	if (_status === "queued" || _status === "in_progress") {
+	if (result === "pendin") {
 		state = "pending";
 	}
 
