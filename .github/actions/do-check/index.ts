@@ -5,34 +5,27 @@ async function run() {
 	const token = getInput("token");
 	const pr = getInput("pr");
 	const sha = getInput("sha");
+	const result = getInput("result");
 
 	console.log({ token, pr, sha });
 	const octokit = getOctokit(token);
 
-	if (context.eventName === "workflow_run") {
-	}
-
 	console.log(context);
 
-	const conclusion = context.payload.workflow_run.conclusion;
-
-	const _workflow_name =
-		context.payload.workflow_run.name || "Unknown Workflow";
+	const _workflow_name = context.workflow || "Unknown Workflow";
 	const _status = context.payload.workflow_run.status;
 
 	let state: "pending" | "success" | "failure" | "error" = "pending";
 
 	if (_status === "completed") {
-		if (conclusion === "success") {
+		if (result === "success") {
 			state = "success";
-		} else if (conclusion === "failure") {
+		} else if (result === "failure") {
 			state = "failure";
-		} else if (conclusion === "cancelled") {
+		} else if (result === "cancelled") {
 			state = "pending";
-		} else if (conclusion === "skipped") {
+		} else if (result === "skipped") {
 			state = "success";
-		} else if (conclusion === "timed_out") {
-			state = "failure";
 		} else {
 			state = "error";
 		}
@@ -42,7 +35,7 @@ async function run() {
 		state = "pending";
 	}
 
-	console.log({ state, _status, conclusion, _workflow_name });
+	console.log({ state, _status, result, _workflow_name });
 
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
@@ -58,3 +51,4 @@ async function run() {
 run();
 
 // error, failure, pending, success
+// success, failure, cancelled, or skipped

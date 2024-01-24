@@ -11492,31 +11492,22 @@ async function run() {
   const token = (0, import_core.getInput)("token");
   const pr = (0, import_core.getInput)("pr");
   const sha = (0, import_core.getInput)("sha");
+  const result = (0, import_core.getInput)("result");
+  console.log({ token, pr, sha });
   const octokit = (0, import_github.getOctokit)(token);
-  if (import_github.context.eventName === "workflow_run") {
-  }
-  console.log(import_github.context.payload.workflow_run);
-  const conclusion = import_github.context.payload.workflow_run.conclusion;
-  const wf = await octokit.rest.actions.getWorkflowRun({
-    owner: import_github.context.repo.owner,
-    repo: import_github.context.repo.repo,
-    run_id: import_github.context.payload.workflow_run.id
-  });
-  console.log(JSON.stringify(wf.data, null, 2));
-  const _workflow_name = import_github.context.payload.workflow_run.name || "Unknown Workflow";
+  console.log(import_github.context);
+  const _workflow_name = import_github.context.workflow || "Unknown Workflow";
   const _status = import_github.context.payload.workflow_run.status;
   let state = "pending";
   if (_status === "completed") {
-    if (conclusion === "success") {
+    if (result === "success") {
       state = "success";
-    } else if (conclusion === "failure") {
+    } else if (result === "failure") {
       state = "failure";
-    } else if (conclusion === "cancelled") {
+    } else if (result === "cancelled") {
       state = "pending";
-    } else if (conclusion === "skipped") {
+    } else if (result === "skipped") {
       state = "success";
-    } else if (conclusion === "timed_out") {
-      state = "failure";
     } else {
       state = "error";
     }
@@ -11524,7 +11515,7 @@ async function run() {
   if (_status === "queued" || _status === "in_progress") {
     state = "pending";
   }
-  console.log({ state, _status, conclusion, _workflow_name });
+  console.log({ state, _status, result, _workflow_name });
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
     repo: import_github.context.repo.repo,

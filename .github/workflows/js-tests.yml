@@ -10,13 +10,14 @@ permissions:
   statuses: write
 
 jobs:
-  get_pr:
+  test:
     name: "Test one"
     runs-on: ubuntu-latest
     outputs:
       pr_number: ${{ steps.pr.outputs.pr_number }}
       source_repo: ${{ steps.pr.outputs.source_repo }}
       source_branch: ${{ steps.pr.outputs.source_branch }}
+      sha: ${{ steps.pr.outputs.sha }}
     steps:
       - id: pr
         uses: "gradio-app/github/actions/find-pr@main"
@@ -29,18 +30,24 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  report:
+    name: "Report"
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
       - name: "Print PR number"
-        run: echo ${{ steps.pr.outputs.pr_number }}
+        run: echo ${{ needs.test.outputs.pr_number }}
       - name: "Print source repo"
-        run: echo ${{ steps.pr.outputs.source_repo }}
+        run: echo ${{ needs.test.outputs.source_repo }}
       - name: "Print source branch"
-        run: echo ${{ steps.pr.outputs.source_branch }}
+        run: echo ${{ needs.test.outputs.source_branch }}
       - name: "Print SHA"
-        run: echo ${{ steps.pr.outputs.sha }}
+        run: echo ${{ needs.test.outputs.sha }}
       - name: do check
         if: always()
         uses: "./.github/actions/do-check"
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pr: ${{ steps.pr.outputs.pr_number }}
-          sha: ${{ steps.pr.outputs.sha }}
+          pr: ${{ needs.test.outputs.pr_number }}
+          sha: ${{ needs.test.outputs.sha }}
+          outcome: ${{ needs.test.result }}
