@@ -1,11 +1,14 @@
 name: "Create a check with a status on a PR"
 
 inputs:
-  github-token:
+  token:
     description: Github token"
     required: true
-  pr-number:
+  pr:
     description: "PR number"
+    required: true
+  sha:
+    description: "SHA of the commit to create the check on"
     required: true
 
 runs:

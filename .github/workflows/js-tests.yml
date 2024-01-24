@@ -18,8 +18,7 @@ jobs:
       source_repo: ${{ steps.pr.outputs.source_repo }}
       source_branch: ${{ steps.pr.outputs.source_branch }}
     steps:
-      - name: "Get PR number"
-        id: pr
+      - id: pr
         uses: "gradio-app/github/actions/find-pr@main"
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -36,6 +35,12 @@ jobs:
         run: echo ${{ steps.pr.outputs.source_repo }}
       - name: "Print source branch"
         run: echo ${{ steps.pr.outputs.source_branch }}
-      - name: "copy PR data to json"
-        run: |
-          echo "{\"pr_number\": \"${{ steps.pr.outputs.pr_number }}\", \"source_repo\": \"${{ steps.pr.outputs.source_repo }}\", \"source_branch\": \"${{ steps.pr.outputs.source_branch }}\"}" > metadata.json
+      - name: "Print SHA"
+        run: echo ${{ steps.pr.outputs.sha }}
+      - name: do check
+        if: always()
+        uses: "./.github/actions/do-check"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr: ${{ steps.pr.outputs.pr_number }}
+          sha: ${{ steps.pr.outputs.sha }}
