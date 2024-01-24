@@ -10,13 +10,9 @@ permissions:
   statuses: write
 
 jobs:
-  get_pr:
-    name: "Test one"
+  test-python:
+    name: "Test two"
     runs-on: ubuntu-latest
-    outputs:
-      pr_number: ${{ steps.pr.outputs.pr_number }}
-      source_repo: ${{ steps.pr.outputs.source_repo }}
-      source_branch: ${{ steps.pr.outputs.source_branch }}
     steps:
       - name: "Get PR number"
         id: pr
@@ -29,31 +25,12 @@ jobs:
           ref: ${{ steps.pr.outputs.source_branch }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Print PR number"
-        run: echo ${{ steps.pr.outputs.pr_number }}
-      - name: "Print source repo"
-        run: echo ${{ steps.pr.outputs.source_repo }}
-      - name: "Print source branch"
-        run: echo ${{ steps.pr.outputs.source_branch }}
-      - name: "copy PR data to json"
-        run: |
-          echo "{\"pr_number\": \"${{ steps.pr.outputs.pr_number }}\", \"source_repo\": \"${{ steps.pr.outputs.source_repo }}\", \"source_branch\": \"${{ steps.pr.outputs.source_branch }}\"}" > metadata.json
-      - name: Upload data
-        uses: actions/upload-artifact@v2
-        with:
-          name: pr-data-${{ github.run_id }}
-          path: metadata.json
-  test_two:
-    name: "Test two"
-    runs-on: ubuntu-latest
-    needs: get_pr
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          repository: ${{ needs.get_pr.outputs.source_repo }}
-          ref: ${{ needs.get_pr.outputs.source_branch }}
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: error
         run: exit 1
+      - name: do check
+        if: always()
+        uses: "./.github/actions/do-check"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr: ${{ steps.pr.outputs.pr_number }}
+          sha: ${{ steps.pr.outputs.sha }}
