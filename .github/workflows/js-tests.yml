@@ -41,6 +41,6 @@ jobs:
         if: always()
         uses: "./.github/actions/do-check"
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           pr: ${{ steps.pr.outputs.pr_number }}
           sha: ${{ steps.pr.outputs.sha }}
