@@ -35,6 +35,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: "Print PR number"
         run: echo ${{ needs.test.outputs.pr_number }}
       - name: "Print source repo"
