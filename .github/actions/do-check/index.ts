@@ -8,8 +8,8 @@ async function run() {
 	const result = getInput("result");
 	const name = getInput("name");
 	const init = getInput("init");
-	const changes = getInput("changes");
-	const type = getInput("type") || "[]";
+	const changes = getInput("changes") || "[]";
+	const type = getInput("type");
 
 	console.log({ token, pr, sha });
 	const octokit = getOctokit(token);
