@@ -90,13 +90,18 @@ async function run() {
 		console.log(error);
 	}
 
+	console.log(JSON.stringify(jobs, null, 2));
+
 	const { html_url, started_at } = jobs?.data.jobs.find(
 		(job) => job.name === job_id,
 	) || { html_url: null, created_at: null };
 
+	const current = new Date().toISOString();
+
+	console.log({ started_at: started_at && new Date(started_at), current });
 	const duration = started_at
 		? `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
-				new Date().toISOString(),
+				current,
 				started_at,
 		  )}`
 		: `${state === "success" ? "Successful" : "Failed"}`;
