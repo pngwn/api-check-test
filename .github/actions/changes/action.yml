@@ -38,7 +38,7 @@ runs:
         repository: ${{ steps.pr.outputs.source_repo }}
         ref: ${{ steps.pr.outputs.source_branch }}
         fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ inputs.token }}
 
     - uses: dorny/paths-filter@v2
       id: changes
