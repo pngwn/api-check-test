@@ -1,0 +1,48 @@
+name: 'prepare'
+description: 'Prepare workflow'
+
+inputs:
+  check:
+    description: 'Check name'
+    default: 'false'
+  result:
+    description: 'Result of the check'
+    default: 'pending'
+outputs:
+  source_repo:
+    description: 'Source repo'
+    value: ${{ steps.pr.outputs.source_repo }}
+  source_branch:
+    description: 'Source branch'
+    value: ${{ steps.pr.outputs.source_branch }}
+  sha:
+    description: 'SHA of the commit to create the check on'
+    value: ${{ steps.pr.outputs.sha }}
+  pr_number:
+    description: 'PR number'
+    value: ${{ steps.pr.outputs.pr_number }}
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get PR number"
+        id: pr
+        uses: "gradio-app/github/actions/find-pr@main"
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v3
+      with:
+        repository: ${{ steps.pr.outputs.source_repo }}
+        ref: ${{ steps.pr.outputs.source_branch }}
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: do check
+      if: always()
+      uses: "./.github/actions/do-check"
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        pr: ${{ steps.pr.outputs.pr_number }}
+        sha: ${{ steps.pr.outputs.sha }}
+        name: ${{ inputs.check }}
+        result: "pending"
