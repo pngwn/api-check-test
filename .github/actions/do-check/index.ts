@@ -76,69 +76,38 @@ async function run() {
 
 	console.log({ state, result, _workflow_name });
 
-	// console.log(JSON.stringify(workflow_run, null, 2));
+	let jobs: Awaited<
+		ReturnType<typeof octokit.rest.actions.listJobsForWorkflowRun>
+	> | null = null;
 
-	// if (result === "pending") {
-	// 	const workflows = await octokit.rest.actions.listRepoWorkflows({
-	// 		owner: context.repo.owner,
-	// 		repo: context.repo.repo,
-	// 	});
-	// 	const runs = [
-	// 		"test / functional",
-	// 		"test / visual",
-	// 		"test / js",
-	// 		"test / python 3.8",
-	// 		"test / python 3.10",
-	// 		"test / windows / python 3.8",
-	// 		"test / windows / python 3.10",
-	// 		"build / js",
-	// 		"build / python",
-	// 		"deploy / website",
-	// 		"deploy / publish",
-	// 	];
+	try {
+		jobs = await octokit.rest.actions.listJobsForWorkflowRun({
+			owner: context.repo.owner,
+			repo: context.repo.repo,
+			run_id: context.runId,
+		});
+	} catch (error) {
+		console.log(error);
+	}
 
-	// 	// const urls = await Promise.all(
-	// 	// 	runs.map((run) =>{
-	// 	// 		const x = workflows.data.workflows.find((workflow) => workflow.name === run),
-	// 	// 		return {
-	// 	// 			name: run,
-	// 	// 			url: x ? x.html_url : null
-	// 	// 		};
-	// 	// 	}
+	const { html_url, started_at } = jobs?.data.jobs.find(
+		(job) => job.name === job_id,
+	) || { html_url: null, created_at: null };
 
-	// 	// );
-
-	// 	await Promise.all(
-	// 		runs.map((run) =>
-	// 			octokit.rest.repos.createCommitStatus({
-	// 				owner: context.repo.owner,
-	// 				repo: context.repo.repo,
-	// 				sha,
-	// 				state: "pending",
-	// 				description: "Running checks",
-	// 				context: run,
-	// 				target_url: "https://google.com",
-	// 			}),
-	// 		),
-	// 	);
-	// } else {
-
-	// }
-
-	workflow_run.data.created_at;
-	workflow_run.data.updated_at;
+	const duration = started_at
+		? `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
+				new Date().toISOString(),
+				started_at,
+		  )}`
+		: `${state === "success" ? "Successful" : "Failed"}`;
 
 	create_commit_status(
 		octokit,
 		sha,
 		state,
 		_workflow_name,
-
-		`${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
-			workflow_run.data.updated_at,
-			workflow_run.data.created_at,
-		)}`,
-		workflow_run.data.html_url,
+		duration,
+		html_url || workflow_run.data.html_url,
 	);
 }
 
@@ -162,9 +131,6 @@ function create_commit_status(
 		target_url,
 	});
 }
-
-// error, failure, pending, success
-// success, failure, cancelled, or skipped
 
 function get_duration(date1: string, date2: string) {
 	var diff = new Date(date1).getTime() - new Date(date2).getTime();

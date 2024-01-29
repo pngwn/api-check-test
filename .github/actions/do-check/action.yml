@@ -28,5 +28,5 @@ inputs:
   job_id:
     description: "Job id"
 runs:
-  using: "node16"
-  main: "dist/index.cjs"
+  using: "node20"
+  main: "dist/index.js"
