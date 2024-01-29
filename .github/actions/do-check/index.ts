@@ -37,7 +37,7 @@ async function run() {
 					octokit,
 					sha,
 					has_changes ? "pending" : "success",
-					`test / python ${version} ${type == "gradio" ? "" : "/ client"}`,
+					`test / ${type == "gradio" ? "" : "client / "}python ${version} `,
 					has_changes ? "running checks" : "no changes detected - skipped",
 					workflow_run.data.html_url,
 				);

@@ -1,4 +1,4 @@
-name: workflow-trigger
+name: trigger
 on:
   push:
     branches:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: trigger
+    name: workflows
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Hello, world!"
