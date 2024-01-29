@@ -1,0 +1,120 @@
+name: "prepare"
+description: "Prepare workflow"
+
+inputs:
+  type:
+    description: "Type of workflow"
+    default: "one of: `gradio`, `python-client`, `js`, `js-client`, `functional`"
+  token:
+    description: "Github token"
+    required: true
+outputs:
+  should_run:
+    description: "Whether to run the workflow"
+    value: ${{ steps.should_run.outputs.should_run }}
+  pr_number:
+    description: "PR number"
+    value: ${{ steps.pr.outputs.pr_number }}
+  sha:
+    description: "SHA of the commit to create the check on"
+    value: ${{ steps.pr.outputs.sha }}
+  source_repo:
+    description: "Source repo"
+    value: ${{ steps.pr.outputs.source_repo }}
+  source_branch:
+    description: "Source branch"
+    value: ${{ steps.pr.outputs.source_branch }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get PR number"
+      id: pr
+      uses: "gradio-app/github/actions/find-pr@main"
+      with:
+        github_token: ${{ inputs.token }}
+    - uses: actions/checkout@v3
+      with:
+        repository: ${{ steps.pr.outputs.source_repo }}
+        ref: ${{ steps.pr.outputs.source_branch }}
+        fetch-depth: 0
+        token: ${{ inputs.token }}
+
+    - uses: dorny/paths-filter@v2
+      id: changes
+
+      with:
+        ref: ${{ steps.pr.outputs.source_branch }}
+        filters: |
+          python-client:
+            - 'client/python/**'
+            - 'gradio/**'
+            - 'requirements.txt'
+            - '.github/**'
+          gradio:
+            - 'client/python/**'
+            - 'gradio/**'
+            - 'requirements.txt'
+            - '.github/**'
+            - 'scripts/**'
+            - 'test/**'
+          js-client:
+            - 'client/js/**'
+            - 'package.json'
+            - '.github/**'
+            - 'pnpm-lock.yaml'
+            - 'tsconfig.json'
+            - '.config/**'
+          js:
+            - 'js/**'
+            - 'client/js/**'
+            - '.github/**'
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+            - 'tsconfig.json'
+            - '.config/**'
+          functional:
+            - '.github/**'
+            - 'client/**'
+            - 'demo/**'
+            - 'gradio/**'
+            - 'js/**'
+            - 'scripts/**'
+            - 'globals.d.ts'
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+            - 'pyproject.toml'
+            - 'requirements.txt'
+    - name: set env (python-client)
+      if: ${{ inputs.type == 'python-client' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
+    - name: set env (gradio)
+      if: ${{ inputs.type == 'gradio' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
+    - name: set env (js-client)
+      if: ${{ inputs.type == 'js-client' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.js-client == 'true' }}" >> $GITHUB_ENV
+    - name: set env (js)
+      if: ${{ inputs.type == 'js' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.js == 'true' }}" >> $GITHUB_ENV
+    - name: set env (functional)
+      if: ${{ inputs.type == 'functional' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.functional == 'true' }}" >> $GITHUB_ENV
+    - name: set output
+      id: should_run
+      shell: bash
+      run: echo "::set-output name=should_run::${{ env.SHOULD_RUN }}"
+    - uses: "./.github/actions/do-check"
+      with:
+        token: ${{ inputs.token }}
+        pr: ${{ steps.pr.outputs.pr_number }}
+        sha: ${{ steps.pr.outputs.sha }}
+        name: ${{ inputs.name }}
+        changes: ${{ steps.changes.outputs.changes }}
+        type: ${{ inputs.type }}
+        init: true

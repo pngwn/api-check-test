@@ -1,4 +1,4 @@
-name: "test / js"
+name: "test / client / python"
 on:
   workflow_run:
     workflows: [trigger]
@@ -22,21 +22,26 @@ jobs:
       - uses: ./.github/actions/changes
         id: changes
         with:
-          type: "js"
+          type: "python-client"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  test-js:
-    name: "test-js"
+  test-python:
+    name: "test-python-client-${{matrix.python-version}}"
     runs-on: ubuntu-latest
     needs: changes
-
     if: needs.changes.outputs.should_run == 'true'
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.10"]
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.changes.outputs.source_branch }}
           repository: ${{ needs.changes.outputs.source_repo }}
 
+      - name: error
+        if: matrix.python-version == '3.8'
+        run: exit 1
       - name: do check
         if: always()
         uses: "./.github/actions/do-check"
@@ -44,6 +49,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pr: ${{ needs.changes.outputs.pr_number }}
           sha: ${{ needs.changes.outputs.sha }}
-          name: "test / js"
+          name: "test / client / python ${{ matrix.python-version }}"
           result: ${{ job.status }}
-          job_id: "test-js"
+          job_id: "test-python-client-${{matrix.python-version}}"

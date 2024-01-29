@@ -16,7 +16,17 @@ inputs:
   name:
     description: "Name of the check"
     required: true
-
+  type:
+    description: "Type of workflow"
+    required: true
+  changes:
+    description: "Changed types"
+    required: true
+  init:
+    description: "Whether the check is initialising a commit status"
+    default: "false"
+  job_id:
+    description: "Job id"
 runs:
-  using: "node16"
-  main: "dist/index.cjs"
+  using: "node20"
+  main: "dist/index.js"

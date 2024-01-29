@@ -11518,7 +11518,7 @@ async function run() {
           octokit,
           sha,
           has_changes ? "pending" : "success",
-          `test / python ${version2} ${type == "gradio" ? "" : "/ client"}`,
+          `test / ${type == "gradio" ? "" : "client / "}python ${version2} `,
           has_changes ? "running checks" : "no changes detected - skipped",
           workflow_run.data.html_url
         );
@@ -11551,18 +11551,33 @@ async function run() {
     state = "error";
   }
   console.log({ state, result, _workflow_name });
-  workflow_run.data.created_at;
-  workflow_run.data.updated_at;
+  let jobs = null;
+  try {
+    jobs = await octokit.rest.actions.listJobsForWorkflowRun({
+      owner: import_github.context.repo.owner,
+      repo: import_github.context.repo.repo,
+      run_id: import_github.context.runId
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  console.log(JSON.stringify(jobs, null, 2));
+  const { html_url, started_at } = jobs?.data.jobs.find(
+    (job) => job.name === job_id
+  ) || { html_url: null, created_at: null };
+  const current = (/* @__PURE__ */ new Date()).toISOString();
+  console.log({ started_at: started_at && new Date(started_at), current });
+  const duration = started_at ? `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
+    current,
+    started_at
+  )}` : `${state === "success" ? "Successful" : "Failed"}`;
   create_commit_status(
     octokit,
     sha,
     state,
     _workflow_name,
-    `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
-      workflow_run.data.updated_at,
-      workflow_run.data.created_at
-    )}`,
-    workflow_run.data.html_url
+    duration,
+    html_url || workflow_run.data.html_url
   );
 }
 run();

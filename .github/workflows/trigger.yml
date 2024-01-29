@@ -1,4 +1,4 @@
-name: workflow-trigger
+name: trigger
 on:
   push:
     branches:
@@ -12,48 +12,7 @@ on:
 
 jobs:
   build:
-    permissions: write-all
-    name: build
+    name: workflows
     runs-on: ubuntu-22.04
     steps:
-      - id: pr
-        uses: "gradio-app/github/actions/find-pr@main"
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
-      - name: "Print PR number"
-        run: echo ${{ steps.pr.outputs.pr_number }}
-      - name: "Print source repo"
-        run: echo ${{ steps.pr.outputs.source_repo }}
-      - name: "Print source branch"
-        run: echo ${{ steps.pr.outputs.source_branch }}
-      - name: "Print SHA"
-        run: echo ${{ steps.pr.outputs.sha }}
-      - name: do check
-        if: always()
-        uses: "./.github/actions/do-check"
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pr: ${{ steps.pr.outputs.pr_number }}
-          sha: ${{ steps.pr.outputs.sha }}
-          result: pending
-      - uses: actions/setup-python@v3
-        with:
-          python-version: 3.8
-
-      - name: Cache Python virtual environment
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: .venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-
-
-      - name: Create and source virtual environment
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install -r requirements.txt
-          #  hi
+      - run: echo "Hello, world!"
