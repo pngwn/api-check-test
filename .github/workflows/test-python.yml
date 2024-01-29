@@ -46,26 +46,12 @@ jobs:
       matrix:
         python-version: ["3.8", "3.10"]
     steps:
-      - name: "Get PR number"
-        id: pr
-        uses: "gradio-app/github/actions/find-pr@main"
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/prepare
+        id: prepare
         with:
-          repository: ${{ steps.pr.outputs.source_repo }}
-          ref: ${{ steps.pr.outputs.source_branch }}
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: do check
-        if: always()
-        uses: "./.github/actions/do-check"
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pr: ${{ steps.pr.outputs.pr_number }}
-          sha: ${{ steps.pr.outputs.sha }}
           name: "test / python ${{ matrix.python-version }}"
-          result: "pending"
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: error
         if: matrix.python-version == '3.8'
         run: exit 1
@@ -74,7 +60,7 @@ jobs:
         uses: "./.github/actions/do-check"
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pr: ${{ steps.pr.outputs.pr_number }}
-          sha: ${{ steps.pr.outputs.sha }}
+          pr: ${{ steps.prepare.outputs.pr_number }}
+          sha: ${{ steps.prepare.outputs.sha }}
           name: "test / python ${{ matrix.python-version }}"
           result: ${{ job.status }}
