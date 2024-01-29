@@ -74,6 +74,7 @@ runs:
             - 'tsconfig.json'
             - '.config/**'
           functional:
+            - '.github/**'
             - 'client/**'
             - 'demo/**'
             - 'gradio/**'

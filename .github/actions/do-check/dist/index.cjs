@@ -11496,7 +11496,7 @@ async function run() {
   const name = (0, import_core.getInput)("name");
   const init = (0, import_core.getInput)("init");
   const changes = (0, import_core.getInput)("changes");
-  const type = (0, import_core.getInput)("type");
+  const type = (0, import_core.getInput)("type") || "[]";
   console.log({ token, pr, sha });
   const octokit = (0, import_github.getOctokit)(token);
   console.log(import_github.context);
@@ -11510,9 +11510,8 @@ async function run() {
   });
   console.log({ workflow_run });
   if (init === "true") {
-    const _changes = JSON.parse(changes);
+    const has_changes = JSON.parse(changes).includes(type);
     if (type == "gradio" || type == "python-client") {
-      const has_changes = _changes?.[type] === "true";
       ["3.8", "3.10"].forEach((version2) => {
         create_commit_status(
           octokit,
@@ -11524,7 +11523,6 @@ async function run() {
         );
       });
     } else {
-      const has_changes = _changes?.[type] === "true";
       create_commit_status(
         octokit,
         sha,

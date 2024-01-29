@@ -9,7 +9,7 @@ async function run() {
 	const name = getInput("name");
 	const init = getInput("init");
 	const changes = getInput("changes");
-	const type = getInput("type");
+	const type = getInput("type") || "[]";
 
 	console.log({ token, pr, sha });
 	const octokit = getOctokit(token);
@@ -28,11 +28,11 @@ async function run() {
 	console.log({ workflow_run });
 
 	if (init === "true") {
-		const _changes = JSON.parse(changes);
+		const has_changes = JSON.parse(changes).includes(type);
+
 		// `gradio`, `python-client`, `js`, `js-client`, `functional`
 
 		if (type == "gradio" || type == "python-client") {
-			const has_changes = _changes?.[type] === "true";
 			["3.8", "3.10"].forEach((version) => {
 				create_commit_status(
 					octokit,
@@ -44,7 +44,6 @@ async function run() {
 				);
 			});
 		} else {
-			const has_changes = _changes?.[type] === "true";
 			create_commit_status(
 				octokit,
 				sha,
