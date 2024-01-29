@@ -31,12 +31,6 @@ runs:
         uses: "gradio-app/github/actions/find-pr@main"
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-    - uses: actions/checkout@v3
-      with:
-        repository: ${{ steps.pr.outputs.source_repo }}
-        ref: ${{ steps.pr.outputs.source_branch }}
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
     - name: do check
       if: always()
       uses: "./.github/actions/do-check"
