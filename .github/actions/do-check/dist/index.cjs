@@ -11532,6 +11532,7 @@ async function run() {
         workflow_run.data.html_url
       );
     }
+    return;
   }
   let state = "pending";
   if (!result) {
@@ -11557,8 +11558,8 @@ async function run() {
     state,
     _workflow_name,
     `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
-      workflow_run.data.created_at,
-      workflow_run.data.updated_at
+      workflow_run.data.updated_at,
+      workflow_run.data.created_at
     )}`,
     workflow_run.data.html_url
   );

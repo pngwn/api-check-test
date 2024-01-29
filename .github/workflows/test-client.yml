@@ -1,4 +1,4 @@
-name: "test / gradio / python {version}"
+name: "test / python {version} / client"
 on:
   workflow_run:
     workflows: [workflow-trigger]
