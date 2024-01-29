@@ -123,6 +123,15 @@ async function run() {
 	// } else {
 
 	// }
+
+	create_commit_status(
+		octokit,
+		sha,
+		state,
+		_workflow_name,
+		result,
+		workflow_run.data.html_url,
+	);
 }
 
 run();

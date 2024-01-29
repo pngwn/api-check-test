@@ -11549,6 +11549,14 @@ async function run() {
     state = "error";
   }
   console.log({ state, result, _workflow_name });
+  create_commit_status(
+    octokit,
+    sha,
+    state,
+    _workflow_name,
+    result,
+    workflow_run.data.html_url
+  );
 }
 run();
 function create_commit_status(octokit, sha, state, _workflow_name, description, target_url) {
