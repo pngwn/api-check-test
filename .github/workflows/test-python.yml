@@ -26,9 +26,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   test-python:
-    name: "Test two"
+    name: "Test-python"
     runs-on: ubuntu-latest
     needs: changes
+
     if: needs.changes.outputs.should_run == 'true'
     strategy:
       matrix:
@@ -51,3 +52,4 @@ jobs:
           sha: ${{ needs.changes.outputs.sha }}
           name: "test / python ${{ matrix.python-version }}"
           result: ${{ job.status }}
+          id: ${{ github.job }}

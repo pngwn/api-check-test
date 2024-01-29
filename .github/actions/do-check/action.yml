@@ -25,6 +25,9 @@ inputs:
   init:
     description: "Whether the check is initialising a commit status"
     default: "false"
+  job:
+    description: "Job id"
+    default: "false"
 
 runs:
   using: "node16"

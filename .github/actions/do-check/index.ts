@@ -10,8 +10,9 @@ async function run() {
 	const init = getInput("init");
 	const changes = getInput("changes") || "[]";
 	const type = getInput("type");
+	const job_id = getInput("job");
 
-	console.log({ token, pr, sha });
+	console.log({ token, pr, sha, job_id });
 	const octokit = getOctokit(token);
 
 	console.log(context);
