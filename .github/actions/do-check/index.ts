@@ -7,15 +7,60 @@ async function run() {
 	const sha = getInput("sha");
 	const result = getInput("result");
 	const name = getInput("name");
+	const init = getInput("init");
+	const changes = getInput("changes");
+	const type = getInput("type");
 
 	console.log({ token, pr, sha });
 	const octokit = getOctokit(token);
 
 	console.log(context);
 
+	console.log(JSON.stringify(JSON.parse(changes), null, 2));
+	console.log({ type });
 	let _workflow_name = name || context.workflow || "Unknown Workflow";
 
+	const workflow_run = await octokit.rest.actions.getWorkflowRun({
+		owner: context.repo.owner,
+		repo: context.repo.repo,
+		run_id: context.runId,
+	});
+	console.log({ workflow_run });
+
+	if (init === "true") {
+		const _changes = JSON.parse(changes);
+		// `gradio`, `python-client`, `js`, `js-client`, `functional`
+
+		if (type == "gradio" || type == "python-client") {
+			const has_changes = _changes?.[type] === "true";
+			["3.8", "3.10"].forEach((version) => {
+				create_commit_status(
+					octokit,
+					sha,
+					has_changes ? "pending" : "success",
+					`test / python ${version} ${type == "gradio" ? "" : "/ client"}`,
+					has_changes ? "running checks" : "no changes detected - skipped",
+					workflow_run.data.html_url,
+				);
+			});
+		} else {
+			const has_changes = _changes?.[type] === "true";
+			create_commit_status(
+				octokit,
+				sha,
+				has_changes ? "pending" : "success",
+				_workflow_name,
+				has_changes ? "running checks" : "no changes detected - skipped",
+				workflow_run.data.html_url,
+			);
+		}
+	}
+
 	let state: "pending" | "success" | "failure" | "error" = "pending";
+
+	if (!result) {
+		state = "failure";
+	}
 
 	if (result === "success") {
 		state = "success";
@@ -29,19 +74,9 @@ async function run() {
 		state = "error";
 	}
 
-	if (result === "pending") {
-		state = "pending";
-	}
-
 	console.log({ state, result, _workflow_name });
 
-	const workflow_run = await octokit.rest.actions.getWorkflowRun({
-		owner: context.repo.owner,
-		repo: context.repo.repo,
-		run_id: context.runId,
-	});
-
-	console.log(JSON.stringify(workflow_run, null, 2));
+	// console.log(JSON.stringify(workflow_run, null, 2));
 
 	// if (result === "pending") {
 	// 	const workflows = await octokit.rest.actions.listRepoWorkflows({
@@ -87,19 +122,30 @@ async function run() {
 	// 		),
 	// 	);
 	// } else {
+
+	// }
+}
+
+run();
+
+function create_commit_status(
+	octokit: ReturnType<typeof getOctokit>,
+	sha: string,
+	state: "pending" | "success" | "failure" | "error",
+	_workflow_name: string,
+	description: string,
+	target_url?: string,
+) {
 	octokit.rest.repos.createCommitStatus({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
 		sha,
 		state,
-		description: "This is a passing test",
+		description,
 		context: _workflow_name,
-		target_url: "https://google.com",
+		target_url,
 	});
-	// }
 }
-
-run();
 
 // error, failure, pending, success
 // success, failure, cancelled, or skipped

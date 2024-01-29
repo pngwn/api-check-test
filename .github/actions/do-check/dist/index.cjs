@@ -11494,11 +11494,51 @@ async function run() {
   const sha = (0, import_core.getInput)("sha");
   const result = (0, import_core.getInput)("result");
   const name = (0, import_core.getInput)("name");
+  const init = (0, import_core.getInput)("init");
+  const changes = (0, import_core.getInput)("changes");
+  const type = (0, import_core.getInput)("type");
   console.log({ token, pr, sha });
   const octokit = (0, import_github.getOctokit)(token);
   console.log(import_github.context);
+  console.log(JSON.stringify(JSON.parse(changes), null, 2));
+  console.log({ type });
   let _workflow_name = name || import_github.context.workflow || "Unknown Workflow";
+  const workflow_run = await octokit.rest.actions.getWorkflowRun({
+    owner: import_github.context.repo.owner,
+    repo: import_github.context.repo.repo,
+    run_id: import_github.context.runId
+  });
+  console.log({ workflow_run });
+  if (init === "true") {
+    const _changes = JSON.parse(changes);
+    if (type == "gradio" || type == "python-client") {
+      const has_changes = _changes?.[type] === "true";
+      ["3.8", "3.10"].forEach((version2) => {
+        create_commit_status(
+          octokit,
+          sha,
+          has_changes ? "pending" : "success",
+          `test / python ${version2} ${type == "gradio" ? "" : "/ client"}`,
+          has_changes ? "running checks" : "no changes detected - skipped",
+          workflow_run.data.html_url
+        );
+      });
+    } else {
+      const has_changes = _changes?.[type] === "true";
+      create_commit_status(
+        octokit,
+        sha,
+        has_changes ? "pending" : "success",
+        _workflow_name,
+        has_changes ? "running checks" : "no changes detected - skipped",
+        workflow_run.data.html_url
+      );
+    }
+  }
   let state = "pending";
+  if (!result) {
+    state = "failure";
+  }
   if (result === "success") {
     state = "success";
   } else if (result === "failure") {
@@ -11510,27 +11550,20 @@ async function run() {
   } else {
     state = "error";
   }
-  if (result === "pending") {
-    state = "pending";
-  }
   console.log({ state, result, _workflow_name });
-  const workflow_run = await octokit.rest.actions.getWorkflowRun({
-    owner: import_github.context.repo.owner,
-    repo: import_github.context.repo.repo,
-    run_id: import_github.context.runId
-  });
-  console.log(JSON.stringify(workflow_run, null, 2));
+}
+run();
+function create_commit_status(octokit, sha, state, _workflow_name, description, target_url) {
   octokit.rest.repos.createCommitStatus({
     owner: import_github.context.repo.owner,
     repo: import_github.context.repo.repo,
     sha,
     state,
-    description: "This is a passing test",
+    description,
     context: _workflow_name,
-    target_url: "https://google.com"
+    target_url
   });
 }
-run();
 /*! Bundled license information:
 
 is-plain-object/dist/is-plain-object.js:

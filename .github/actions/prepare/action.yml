@@ -11,6 +11,7 @@ inputs:
   token:
     description: "Github token"
     required: true
+
 outputs:
   source_repo:
     description: "Source repo"
@@ -28,11 +29,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: "Get PR number"
-      id: pr
-      uses: "gradio-app/github/actions/find-pr@main"
-      with:
-        github_token: ${{ inputs.token }}
     - name: do check
       if: always()
       uses: "./.github/actions/do-check"
