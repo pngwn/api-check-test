@@ -86,21 +86,27 @@ runs:
             - 'requirements.txt'
     - name: set env (python-client)
       if: ${{ inputs.type == 'python-client' }}
+      shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
     - name: set env (gradio)
       if: ${{ inputs.type == 'gradio' }}
+      shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
     - name: set env (js-client)
       if: ${{ inputs.type == 'js-client' }}
+      shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.js-client == 'true' }}" >> $GITHUB_ENV
     - name: set env (js)
       if: ${{ inputs.type == 'js' }}
+      shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.js == 'true' }}" >> $GITHUB_ENV
     - name: set env (functional)
       if: ${{ inputs.type == 'functional' }}
+      shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.functional == 'true' }}" >> $GITHUB_ENV
     - name: set output
       id: should_run
+      shell: bash
       run: echo "::set-output name=should_run::${{ env.SHOULD_RUN }}"
     - uses: "./.github/actions/do-check"
       with:
