@@ -47,11 +47,11 @@ jobs:
         python-version: ["3.8", "3.10"]
     steps:
       - uses: actions/checkout@v3
-      - name: Call Composite Action
+      - uses: ./.github/actions/prepare
         id: prepare
-        uses: ./.github/actions/prepare
         with:
           name: "test / python ${{ matrix.python-version }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: error
         if: matrix.python-version == '3.8'
         run: exit 1
