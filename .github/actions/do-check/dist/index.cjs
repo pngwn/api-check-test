@@ -11497,7 +11497,7 @@ async function run() {
   const init = (0, import_core.getInput)("init");
   const changes = (0, import_core.getInput)("changes") || "[]";
   const type = (0, import_core.getInput)("type");
-  const job_id = (0, import_core.getInput)("job");
+  const job_id = (0, import_core.getInput)("job_id");
   console.log({ token, pr, sha, job_id });
   const octokit = (0, import_github.getOctokit)(token);
   console.log(import_github.context);

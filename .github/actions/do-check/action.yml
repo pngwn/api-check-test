@@ -25,10 +25,8 @@ inputs:
   init:
     description: "Whether the check is initialising a commit status"
     default: "false"
-  job:
+  job_id:
     description: "Job id"
-    default: "false"
-
 runs:
   using: "node16"
   main: "dist/index.cjs"
