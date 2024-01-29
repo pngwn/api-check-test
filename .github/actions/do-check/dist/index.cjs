@@ -11493,10 +11493,11 @@ async function run() {
   const pr = (0, import_core.getInput)("pr");
   const sha = (0, import_core.getInput)("sha");
   const result = (0, import_core.getInput)("result");
+  const name = (0, import_core.getInput)("name");
   console.log({ token, pr, sha });
   const octokit = (0, import_github.getOctokit)(token);
   console.log(import_github.context);
-  let _workflow_name = import_github.context.workflow || "Unknown Workflow";
+  let _workflow_name = name || import_github.context.workflow || "Unknown Workflow";
   let state = "pending";
   if (result === "success") {
     state = "success";
@@ -11513,41 +11514,21 @@ async function run() {
     state = "pending";
   }
   console.log({ state, result, _workflow_name });
-  if (result === "pending") {
-    const runs = [
-      "test / js",
-      "test / visual",
-      "test / python",
-      "test / functional",
-      "build / js",
-      "build / python",
-      "deploy / js",
-      "deploy / python"
-    ];
-    await Promise.all(
-      runs.map(
-        (run2) => octokit.rest.repos.createCommitStatus({
-          owner: import_github.context.repo.owner,
-          repo: import_github.context.repo.repo,
-          sha,
-          state: "pending",
-          description: "Running checks",
-          context: run2,
-          target_url: "https://google.com"
-        })
-      )
-    );
-  } else {
-    octokit.rest.repos.createCommitStatus({
-      owner: import_github.context.repo.owner,
-      repo: import_github.context.repo.repo,
-      sha,
-      state,
-      description: "This is a passing test",
-      context: _workflow_name,
-      target_url: "https://google.com"
-    });
-  }
+  const workflow_run = await octokit.rest.actions.getWorkflowRun({
+    owner: import_github.context.repo.owner,
+    repo: import_github.context.repo.repo,
+    run_id: import_github.context.runId
+  });
+  console.log(JSON.stringify(workflow_run, null, 2));
+  octokit.rest.repos.createCommitStatus({
+    owner: import_github.context.repo.owner,
+    repo: import_github.context.repo.repo,
+    sha,
+    state,
+    description: "This is a passing test",
+    context: _workflow_name,
+    target_url: "https://google.com"
+  });
 }
 run();
 /*! Bundled license information:

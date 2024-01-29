@@ -13,6 +13,9 @@ inputs:
   result:
     description: "Result of the check"
     required: true
+  name:
+    description: "Name of the check"
+    required: true
 
 runs:
   using: "node16"

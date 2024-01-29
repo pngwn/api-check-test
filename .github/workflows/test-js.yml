@@ -1,10 +1,11 @@
-name: "js / test"
+name: "test / test"
 
 on:
-  workflow_run:
-    workflows: [workflow-trigger]
-    types:
-      - completed
+  release
+  # workflow_run:
+  #   workflows: [workflow-trigger]
+  #   types:
+  #     - res
 
 permissions:
   statuses: write
