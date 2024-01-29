@@ -11549,12 +11549,17 @@ async function run() {
     state = "error";
   }
   console.log({ state, result, _workflow_name });
+  workflow_run.data.created_at;
+  workflow_run.data.updated_at;
   create_commit_status(
     octokit,
     sha,
     state,
     _workflow_name,
-    result,
+    `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
+      workflow_run.data.created_at,
+      workflow_run.data.updated_at
+    )}`,
     workflow_run.data.html_url
   );
 }
@@ -11569,6 +11574,20 @@ function create_commit_status(octokit, sha, state, _workflow_name, description, 
     context: _workflow_name,
     target_url
   });
+}
+function get_duration(date1, date2) {
+  var diff = new Date(date1).getTime() - new Date(date2).getTime();
+  return format_milliseconds(diff);
+}
+function format_milliseconds(milliseconds) {
+  const totalSeconds = Math.floor(milliseconds / 1e3);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  if (minutes === 0) {
+    return `${seconds}s`;
+  } else {
+    return `${minutes}m${seconds}s`;
+  }
 }
 /*! Bundled license information:
 

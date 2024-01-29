@@ -30,8 +30,6 @@ async function run() {
 	if (init === "true") {
 		const has_changes = JSON.parse(changes).includes(type);
 
-		// `gradio`, `python-client`, `js`, `js-client`, `functional`
-
 		if (type == "gradio" || type == "python-client") {
 			["3.8", "3.10"].forEach((version) => {
 				create_commit_status(
@@ -124,12 +122,19 @@ async function run() {
 
 	// }
 
+	workflow_run.data.created_at;
+	workflow_run.data.updated_at;
+
 	create_commit_status(
 		octokit,
 		sha,
 		state,
 		_workflow_name,
-		result,
+
+		`${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
+			workflow_run.data.created_at,
+			workflow_run.data.updated_at,
+		)}`,
 		workflow_run.data.html_url,
 	);
 }
@@ -157,3 +162,20 @@ function create_commit_status(
 
 // error, failure, pending, success
 // success, failure, cancelled, or skipped
+
+function get_duration(date1: string, date2: string) {
+	var diff = new Date(date1).getTime() - new Date(date2).getTime();
+	return format_milliseconds(diff);
+}
+
+function format_milliseconds(milliseconds: number): string {
+	const totalSeconds = Math.floor(milliseconds / 1000);
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = totalSeconds % 60;
+
+	if (minutes === 0) {
+		return `${seconds}s`;
+	} else {
+		return `${minutes}m${seconds}s`;
+	}
+}
