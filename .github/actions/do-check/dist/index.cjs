@@ -11519,48 +11519,15 @@ async function run() {
     run_id: import_github.context.runId
   });
   console.log(JSON.stringify(workflow_run, null, 2));
-  if (result === "pending") {
-    const workflows = await octokit.rest.actions.listRepoWorkflows({
-      owner: import_github.context.repo.owner,
-      repo: import_github.context.repo.repo
-    });
-    const runs = [
-      "test / functional",
-      "test / visual",
-      "test / js",
-      "test / python 3.8",
-      "test / python 3.10",
-      "test / windows / python 3.8",
-      "test / windows / python 3.10",
-      "build / js",
-      "build / python",
-      "deploy / website",
-      "deploy / publish"
-    ];
-    await Promise.all(
-      runs.map(
-        (run2) => octokit.rest.repos.createCommitStatus({
-          owner: import_github.context.repo.owner,
-          repo: import_github.context.repo.repo,
-          sha,
-          state: "pending",
-          description: "Running checks",
-          context: run2,
-          target_url: "https://google.com"
-        })
-      )
-    );
-  } else {
-    octokit.rest.repos.createCommitStatus({
-      owner: import_github.context.repo.owner,
-      repo: import_github.context.repo.repo,
-      sha,
-      state,
-      description: "This is a passing test",
-      context: _workflow_name,
-      target_url: "https://google.com"
-    });
-  }
+  octokit.rest.repos.createCommitStatus({
+    owner: import_github.context.repo.owner,
+    repo: import_github.context.repo.repo,
+    sha,
+    state,
+    description: "This is a passing test",
+    context: _workflow_name,
+    target_url: "https://google.com"
+  });
 }
 run();
 /*! Bundled license information:

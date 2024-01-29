@@ -42,60 +42,60 @@ async function run() {
 
 	console.log(JSON.stringify(workflow_run, null, 2));
 
-	if (result === "pending") {
-		const workflows = await octokit.rest.actions.listRepoWorkflows({
-			owner: context.repo.owner,
-			repo: context.repo.repo,
-		});
-		const runs = [
-			"test / functional",
-			"test / visual",
-			"test / js",
-			"test / python 3.8",
-			"test / python 3.10",
-			"test / windows / python 3.8",
-			"test / windows / python 3.10",
-			"build / js",
-			"build / python",
-			"deploy / website",
-			"deploy / publish",
-		];
+	// if (result === "pending") {
+	// 	const workflows = await octokit.rest.actions.listRepoWorkflows({
+	// 		owner: context.repo.owner,
+	// 		repo: context.repo.repo,
+	// 	});
+	// 	const runs = [
+	// 		"test / functional",
+	// 		"test / visual",
+	// 		"test / js",
+	// 		"test / python 3.8",
+	// 		"test / python 3.10",
+	// 		"test / windows / python 3.8",
+	// 		"test / windows / python 3.10",
+	// 		"build / js",
+	// 		"build / python",
+	// 		"deploy / website",
+	// 		"deploy / publish",
+	// 	];
 
-		// const urls = await Promise.all(
-		// 	runs.map((run) =>{
-		// 		const x = workflows.data.workflows.find((workflow) => workflow.name === run),
-		// 		return {
-		// 			name: run,
-		// 			url: x ? x.html_url : null
-		// 		};
-		// 	}
+	// 	// const urls = await Promise.all(
+	// 	// 	runs.map((run) =>{
+	// 	// 		const x = workflows.data.workflows.find((workflow) => workflow.name === run),
+	// 	// 		return {
+	// 	// 			name: run,
+	// 	// 			url: x ? x.html_url : null
+	// 	// 		};
+	// 	// 	}
 
-		// );
+	// 	// );
 
-		await Promise.all(
-			runs.map((run) =>
-				octokit.rest.repos.createCommitStatus({
-					owner: context.repo.owner,
-					repo: context.repo.repo,
-					sha,
-					state: "pending",
-					description: "Running checks",
-					context: run,
-					target_url: "https://google.com",
-				}),
-			),
-		);
-	} else {
-		octokit.rest.repos.createCommitStatus({
-			owner: context.repo.owner,
-			repo: context.repo.repo,
-			sha,
-			state,
-			description: "This is a passing test",
-			context: _workflow_name,
-			target_url: "https://google.com",
-		});
-	}
+	// 	await Promise.all(
+	// 		runs.map((run) =>
+	// 			octokit.rest.repos.createCommitStatus({
+	// 				owner: context.repo.owner,
+	// 				repo: context.repo.repo,
+	// 				sha,
+	// 				state: "pending",
+	// 				description: "Running checks",
+	// 				context: run,
+	// 				target_url: "https://google.com",
+	// 			}),
+	// 		),
+	// 	);
+	// } else {
+	octokit.rest.repos.createCommitStatus({
+		owner: context.repo.owner,
+		repo: context.repo.repo,
+		sha,
+		state,
+		description: "This is a passing test",
+		context: _workflow_name,
+		target_url: "https://google.com",
+	});
+	// }
 }
 
 run();
