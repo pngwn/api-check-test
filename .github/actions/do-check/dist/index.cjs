@@ -11493,10 +11493,11 @@ async function run() {
   const pr = (0, import_core.getInput)("pr");
   const sha = (0, import_core.getInput)("sha");
   const result = (0, import_core.getInput)("result");
+  const name = (0, import_core.getInput)("name");
   console.log({ token, pr, sha });
   const octokit = (0, import_github.getOctokit)(token);
   console.log(import_github.context);
-  let _workflow_name = import_github.context.workflow || "Unknown Workflow";
+  let _workflow_name = name || import_github.context.workflow || "Unknown Workflow";
   let state = "pending";
   if (result === "success") {
     state = "success";

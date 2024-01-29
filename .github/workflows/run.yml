@@ -1,12 +1,12 @@
 name: workflow-run
 
-on:
-  workflow_run:
-    workflows: [workflow-trigger]
-    types:
-      - requested
-permissions:
-  statuses: write
+on: release
+#   workflow_run:
+#     workflows: [workflow-trigger]
+#     types:
+#       - requested
+# permissions:
+#   statuses: write
 
 jobs:
   trigger:

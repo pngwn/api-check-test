@@ -1,6 +1,9 @@
 name: "test / python {version}"
-on: release
-
+on:
+  workflow_run:
+    workflows: [workflow-trigger]
+    types:
+      - requested
 permissions:
   statuses: write
 

@@ -6,13 +6,14 @@ async function run() {
 	const pr = getInput("pr");
 	const sha = getInput("sha");
 	const result = getInput("result");
+	const name = getInput("name");
 
 	console.log({ token, pr, sha });
 	const octokit = getOctokit(token);
 
 	console.log(context);
 
-	let _workflow_name = context.workflow || "Unknown Workflow";
+	let _workflow_name = name || context.workflow || "Unknown Workflow";
 
 	let state: "pending" | "success" | "failure" | "error" = "pending";
 
