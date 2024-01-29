@@ -38,10 +38,6 @@ jobs:
         with:
           ref: ${{ needs.changes.outputs.source_branch }}
           repository: ${{ needs.changes.outputs.source_repo }}
-
-      - name: error
-        if: matrix.python-version == '3.8'
-        run: exit 1
       - name: do check
         if: always()
         uses: "./.github/actions/do-check"
