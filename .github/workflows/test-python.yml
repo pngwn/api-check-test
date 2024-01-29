@@ -1,7 +1,7 @@
 name: "test / python"
 on:
   workflow_run:
-    workflows: [workflow-trigger]
+    workflows: [trigger]
     types:
       - requested
 permissions:
