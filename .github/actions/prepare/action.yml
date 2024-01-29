@@ -2,7 +2,7 @@ name: "prepare"
 description: "Prepare workflow"
 
 inputs:
-  check:
+  name:
     description: "Check name"
     default: "false"
   result:
@@ -40,5 +40,5 @@ runs:
         token: ${{ inputs.token }}
         pr: ${{ steps.pr.outputs.pr_number }}
         sha: ${{ steps.pr.outputs.sha }}
-        name: ${{ inputs.check }}
+        name: ${{ inputs.name }}
         result: "pending"
