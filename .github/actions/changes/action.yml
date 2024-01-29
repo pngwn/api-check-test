@@ -24,7 +24,6 @@ outputs:
   source_branch:
     description: "Source branch"
     value: ${{ steps.pr.outputs.source_branch }}
-  
 
 runs:
   using: "composite"
@@ -34,12 +33,12 @@ runs:
       uses: "gradio-app/github/actions/find-pr@main"
       with:
         github_token: ${{ inputs.token }}
-     - uses: actions/checkout@v3
-        with:
-          repository: ${{ steps.pr.outputs.source_repo }}
-          ref: ${{ steps.pr.outputs.source_branch }}
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v3
+      with:
+        repository: ${{ steps.pr.outputs.source_repo }}
+        ref: ${{ steps.pr.outputs.source_branch }}
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: dorny/paths-filter@v2
       id: changes
@@ -85,31 +84,30 @@ runs:
             - 'pnpm-lock.yaml'
             - 'pyproject.toml'
             - 'requirements.txt'
-            
-      - name: set env (python-client)
-        if: ${{ inputs.type == 'python-client' }}
-        run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
-      - name: set env (gradio)
-        if: ${{ inputs.type == 'gradio' }}
-        run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
-      - name: set env (js-client)
-        if: ${{ inputs.type == 'js-client' }}
-        run: echo "SHOULD_RUN=${{ steps.changes.outputs.js-client == 'true' }}" >> $GITHUB_ENV
-      - name: set env (js)
-        if: ${{ inputs.type == 'js' }}
-        run: echo "SHOULD_RUN=${{ steps.changes.outputs.js == 'true' }}" >> $GITHUB_ENV
-      - name: set env (functional)
-        if: ${{ inputs.type == 'functional' }}
-        run: echo "SHOULD_RUN=${{ steps.changes.outputs.functional == 'true' }}" >> $GITHUB_ENV
-      - name: set output
-        id: should_run
-        run: echo "::set-output name=should_run::${{ env.SHOULD_RUN }}"
-      - uses: "./.github/actions/do-check"
-        with:
-          token: ${{ inputs.token }}
-          pr: ${{ steps.pr.outputs.pr_number }}
-          sha: ${{ steps.pr.outputs.sha }}
-          name: ${{ inputs.name }}
-          changes: ${{ steps.changes.outputs.changes }}
-          type: ${{ inputs.type }}
-          init: true
+    - name: set env (python-client)
+      if: ${{ inputs.type == 'python-client' }}
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
+    - name: set env (gradio)
+      if: ${{ inputs.type == 'gradio' }}
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.gradio == 'true' }}" >> $GITHUB_ENV
+    - name: set env (js-client)
+      if: ${{ inputs.type == 'js-client' }}
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.js-client == 'true' }}" >> $GITHUB_ENV
+    - name: set env (js)
+      if: ${{ inputs.type == 'js' }}
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.js == 'true' }}" >> $GITHUB_ENV
+    - name: set env (functional)
+      if: ${{ inputs.type == 'functional' }}
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.functional == 'true' }}" >> $GITHUB_ENV
+    - name: set output
+      id: should_run
+      run: echo "::set-output name=should_run::${{ env.SHOULD_RUN }}"
+    - uses: "./.github/actions/do-check"
+      with:
+        token: ${{ inputs.token }}
+        pr: ${{ steps.pr.outputs.pr_number }}
+        sha: ${{ steps.pr.outputs.sha }}
+        name: ${{ inputs.name }}
+        changes: ${{ steps.changes.outputs.changes }}
+        type: ${{ inputs.type }}
+        init: true
