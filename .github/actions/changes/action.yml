@@ -80,11 +80,24 @@ runs:
             - 'pnpm-lock.yaml'
             - 'pyproject.toml'
             - 'requirements.txt'
+            - '.config/**'
           visual:
             - '.github/workflows/deploy-chromatic.yml'
             - 'js/**'
             - '!js/_website/**'
             - 'package.json'
+          website:
+            - 'js/_website/**'
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+            - 'guides/**'
+            - 'README.md'
+            - 'CHANGELOG.md'
+            - 'gradio/**'
+            - 'client/**'
+            - 'demo/**'
+            - '.github/deplooy-website.yml'
+
     - name: set env (gradio)
       if: ${{ inputs.type == 'gradio' }}
       shell: bash
@@ -105,6 +118,10 @@ runs:
       if: ${{ inputs.type == 'all' }}
       shell: bash
       run: echo "SHOULD_RUN=true" >> $GITHUB_ENV
+    - name: set env (website)
+      if: ${{ inputs.type == 'website' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.website == 'true' }}" >> $GITHUB_ENV
     - name: set output
       id: should_run
       shell: bash
