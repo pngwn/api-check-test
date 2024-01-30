@@ -1,13 +1,13 @@
-name: workflow-trigger
-
-on: 
-  pull_request:
+name: trigger
+on:
+  push:
     branches:
       - main
+  pull_request:
 
 jobs:
-  trigger:
-    name: "Trigger"
-    runs-on: ubuntu-latest
+  build:
+    name: workflows
+    runs-on: ubuntu-22.04
     steps:
-      - run: echo "Triggering workflow"
+      - run: echo "Hello, github!"
