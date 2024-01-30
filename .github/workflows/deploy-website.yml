@@ -23,7 +23,7 @@ jobs:
       - uses: ./.github/actions/changes
         id: changes
         with:
-          type: "all"
+          type: "website"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-website:

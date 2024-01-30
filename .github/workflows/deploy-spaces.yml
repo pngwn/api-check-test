@@ -22,7 +22,7 @@ jobs:
       - uses: ./.github/actions/changes
         id: changes
         with:
-          type: "all"
+          type: "functional"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-spaces:
