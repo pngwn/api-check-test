@@ -1,4 +1,4 @@
-name: "test / python"
+name: "test / functional"
 on:
   workflow_run:
     workflows: [trigger]
@@ -22,18 +22,14 @@ jobs:
       - uses: ./.github/actions/changes
         id: changes
         with:
-          type: "gradio"
+          type: "functional"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  test-python:
-    name: "test-python-${{ matrix.python-version }}"
+  test-functional:
+    name: "test-functional"
     runs-on: ubuntu-latest
     needs: changes
-
     if: needs.changes.outputs.should_run == 'true'
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.10"]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -46,6 +42,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pr: ${{ needs.changes.outputs.pr_number }}
           sha: ${{ needs.changes.outputs.sha }}
-          name: "test / python ${{ matrix.python-version }}"
+          name: "test / functional"
           result: ${{ job.status }}
-          job_id: "test-python-${{matrix.python-version}}"
+          job_id: "test-functional"

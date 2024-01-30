@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   changes:
-    name: "Check for changes"
+    name: "changes"
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.changes.outputs.should_run }}

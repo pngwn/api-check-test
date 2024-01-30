@@ -42,15 +42,9 @@ runs:
 
     - uses: dorny/paths-filter@v2
       id: changes
-
       with:
         ref: ${{ steps.pr.outputs.source_branch }}
         filters: |
-          python-client:
-            - 'client/python/**'
-            - 'gradio/**'
-            - 'requirements.txt'
-            - '.github/**'
           gradio:
             - 'client/python/**'
             - 'gradio/**'
@@ -58,13 +52,6 @@ runs:
             - '.github/**'
             - 'scripts/**'
             - 'test/**'
-          js-client:
-            - 'client/js/**'
-            - 'package.json'
-            - '.github/**'
-            - 'pnpm-lock.yaml'
-            - 'tsconfig.json'
-            - '.config/**'
           js:
             - 'js/**'
             - 'client/js/**'
@@ -85,6 +72,11 @@ runs:
             - 'pnpm-lock.yaml'
             - 'pyproject.toml'
             - 'requirements.txt'
+          visual:
+            - '.github/workflows/deploy-chromatic.yml'
+            - 'js/**'
+            - '!js/_website/**'
+            - 'package.json'
     - name: set env (python-client)
       if: ${{ inputs.type == 'python-client' }}
       shell: bash
@@ -105,6 +97,10 @@ runs:
       if: ${{ inputs.type == 'functional' }}
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.functional == 'true' }}" >> $GITHUB_ENV
+    - name: set env (visual)
+      if: ${{ inputs.type == 'visual' }}
+      shell: bash
+      run: echo "SHOULD_RUN=${{ steps.changes.outputs.visual == 'true' }}" >> $GITHUB_ENV
     - name: set output
       id: should_run
       shell: bash
