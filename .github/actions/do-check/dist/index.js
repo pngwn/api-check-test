@@ -11511,7 +11511,7 @@ async function run() {
   });
   console.log({ workflow_run });
   if (init === "true") {
-    const has_changes = JSON.parse(changes).includes(type);
+    const has_changes = JSON.parse(changes).includes(type) || type == "all";
     if (type == "gradio" || type == "python-client") {
       ["3.8", "3.10"].forEach((version2) => {
         create_commit_status(
@@ -11519,7 +11519,7 @@ async function run() {
           sha,
           has_changes ? "pending" : "success",
           `test / ${type == "gradio" ? "" : "client / "}python ${version2} `,
-          has_changes ? "running checks" : "no changes detected - skipped",
+          has_changes ? "Running checks" : "Skipped \u2014 No changes detected",
           workflow_run.data.html_url
         );
       });
@@ -11529,7 +11529,7 @@ async function run() {
         sha,
         has_changes ? "pending" : "success",
         _workflow_name,
-        has_changes ? "running checks" : "no changes detected - skipped",
+        has_changes ? "Running checks" : "Skipped \u2014 No changes detected",
         workflow_run.data.html_url
       );
     }

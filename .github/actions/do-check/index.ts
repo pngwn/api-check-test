@@ -38,7 +38,7 @@ async function run() {
 					sha,
 					has_changes ? "pending" : "success",
 					`test / ${type == "gradio" ? "" : "client / "}python ${version} `,
-					has_changes ? "running checks" : "no changes detected - skipped",
+					has_changes ? "Running checks" : "Skipped — No changes detected",
 					workflow_run.data.html_url,
 				);
 			});
@@ -48,7 +48,7 @@ async function run() {
 				sha,
 				has_changes ? "pending" : "success",
 				_workflow_name,
-				has_changes ? "running checks" : "no changes detected - skipped",
+				has_changes ? "Running checks" : "Skipped — No changes detected",
 				workflow_run.data.html_url,
 			);
 		}
