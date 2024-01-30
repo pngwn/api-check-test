@@ -39,6 +39,14 @@ runs:
         ref: ${{ steps.pr.outputs.source_branch }}
         fetch-depth: 0
         token: ${{ inputs.token }}
+    - run: echo "${{ steps.pr.outputs.found_pr }}"
+      shell: bash
+    - run: echo "${{ steps.pr.outputs.source_branch }}"
+      shell: bash
+    - run: echo "${{ steps.pr.outputs.sha }}"
+      shell: bash
+    - run: echo "${{ steps.pr.outputs.pr_number }}"
+      shell: bash
 
     - uses: dorny/paths-filter@v2
       id: changes
@@ -102,7 +110,7 @@ runs:
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.visual == 'true' }}" >> $GITHUB_ENV
     - name: set env (all)
-      if: ${{ steps.pr.outputs.found_pr != 'true' && steps.changes.outputs.source_branch == 'main' }}
+      if: ${{ steps.pr.outputs.found_pr != 'true' && steps.changes.outputs.source_branch != 'main' }}
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.pr.outputs.found_pr != 'true' }}" >> $GITHUB_ENV
     - name: set output
