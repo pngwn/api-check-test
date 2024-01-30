@@ -29,7 +29,7 @@ async function run() {
 	console.log({ workflow_run });
 
 	if (init === "true") {
-		const has_changes = JSON.parse(changes).includes(type);
+		const has_changes = JSON.parse(changes).includes(type) || type == "all";
 
 		if (type == "gradio" || type == "python-client") {
 			["3.8", "3.10"].forEach((version) => {
