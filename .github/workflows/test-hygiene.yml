@@ -1,4 +1,4 @@
-name: "test / higiene"
+name: "test / hygiene"
 on:
   workflow_run:
     workflows: [trigger]

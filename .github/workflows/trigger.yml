@@ -1,18 +1,10 @@
 name: trigger
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    # types: [opened, synchronize, reopened, edited, labeled, unlabeled]
-    branches:
-      - main
-  # issue_comment:
-  #   types: [edited]
 
 jobs:
   build:
     name: workflows
     runs-on: ubuntu-22.04
     steps:
-      - run: echo "Hello, world!"
+      - run: echo "Hello, github!"
