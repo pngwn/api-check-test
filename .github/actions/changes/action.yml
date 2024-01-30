@@ -136,6 +136,7 @@ runs:
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.website == 'true' }}" >> $GITHUB_ENV
     - if: ${{ steps.pr.outputs.mergeable == 'false' }}
       run: echo "SHOULD_RUN=false" >> $GITHUB_ENV
+      shell: bash
     - name: set output
       id: should_run
       shell: bash
