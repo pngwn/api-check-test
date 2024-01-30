@@ -13,13 +13,20 @@ async function run() {
 	const job_id = getInput("job_id");
 	const mergeable = getInput("mergeable");
 
-	console.log({ token, pr, sha, job_id });
+	console.log({
+		token,
+		pr,
+		sha,
+		result,
+		name,
+		init,
+		changes,
+		type,
+		job_id,
+		mergeable,
+	});
 	const octokit = getOctokit(token);
 
-	console.log(context);
-
-	console.log(JSON.stringify(JSON.parse(changes), null, 2));
-	console.log({ type });
 	let _workflow_name = name || context.workflow || "Unknown Workflow";
 
 	const workflow_run = await octokit.rest.actions.getWorkflowRun({
@@ -27,7 +34,6 @@ async function run() {
 		repo: context.repo.repo,
 		run_id: context.runId,
 	});
-	console.log({ workflow_run });
 
 	if (init === "true") {
 		const has_changes = JSON.parse(changes).includes(type) || type == "all";
@@ -104,15 +110,12 @@ async function run() {
 		console.log(error);
 	}
 
-	console.log(JSON.stringify(jobs, null, 2));
-
 	const { html_url, started_at } = jobs?.data.jobs.find(
 		(job) => job.name === job_id,
 	) || { html_url: null, created_at: null };
 
 	const current = new Date().toISOString();
 
-	console.log({ started_at: started_at && new Date(started_at), current });
 	const duration = started_at
 		? `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
 				current,
