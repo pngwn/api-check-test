@@ -45,19 +45,19 @@ runs:
         ref: ${{ steps.pr.outputs.source_branch }}
         fetch-depth: 0
         token: ${{ inputs.token }}
-    - run: echo "${{ steps.pr.outputs.found_pr }}"
+    - run: echo "FOUND_PR? ${{ steps.pr.outputs.found_pr }}"
       shell: bash
-    - run: echo "${{ steps.pr.outputs.source_branch }}"
+    - run: echo "SOURCE_BRANCH? ${{ steps.pr.outputs.source_branch }}"
       shell: bash
-    - run: echo "${{ steps.pr.outputs.sha }}"
+    - run: echo "HEAD_SHA? ${{ steps.pr.outputs.sha }}"
       shell: bash
-    - run: echo "${{ steps.pr.outputs.pr_number }}"
+    - run: echo "PR_NUMBER? ${{ steps.pr.outputs.pr_number }}"
       shell: bash
-    - run: echo "${{ steps.pr.outputs.source_repo }}"
+    - run: echo "$SOURCE_REPO? {{ steps.pr.outputs.source_repo }}"
       shell: bash
-    - run: echo "${{ steps.pr.outputs.merge_sha }}"
+    - run: echo "MERGE_SHA? ${{ steps.pr.outputs.merge_sha }}"
       shell: bash
-    - run: echo "${{ steps.pr.outputs.mergeable }}"
+    - run: echo "MERGEABLE? ${{ steps.pr.outputs.mergeable }}"
       shell: bash
 
     - uses: dorny/paths-filter@v2
@@ -95,8 +95,7 @@ runs:
             - '.config/**'
           visual:
             - '.github/workflows/deploy-chromatic.yml'
-            - 'js/**'
-            - '!js/_website/**'
+            - 'js!(/_website)/**'
             - 'package.json'
           website:
             - 'js/_website/**'
@@ -150,4 +149,4 @@ runs:
         changes: ${{ steps.changes.outputs.changes }}
         type: ${{ inputs.type }}
         init: true
-        mergeable: ${{ steps.pr.outputs.mergeable }}
+        mergeable: ${{ steps.pr.outputs.source_branch == 'main' || steps.pr.outputs.mergeable }}
