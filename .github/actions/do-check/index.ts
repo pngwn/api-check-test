@@ -11,6 +11,7 @@ async function run() {
 	const changes = getInput("changes") || "[]";
 	const type = getInput("type");
 	const job_id = getInput("job_id");
+	const mergeable = getInput("mergeable");
 
 	console.log({ token, pr, sha, job_id });
 	const octokit = getOctokit(token);
@@ -32,23 +33,36 @@ async function run() {
 		const has_changes = JSON.parse(changes).includes(type) || type == "all";
 
 		if (type == "gradio" || type == "python-client") {
+			const context = has_changes
+				? "Running checks"
+				: "Skipped — No changes detected";
+			const result = has_changes ? "pending" : "success";
+
 			["3.8", "3.10"].forEach((version) => {
 				create_commit_status(
 					octokit,
 					sha,
-					has_changes ? "pending" : "success",
+					mergeable === "true" ? result : "failure",
 					`test / ${type == "gradio" ? "" : "client / "}python ${version} `,
-					has_changes ? "Running checks" : "Skipped — No changes detected",
+					mergeable === "true"
+						? context
+						: "Cannot check out PR as it is not mergeable",
 					workflow_run.data.html_url,
 				);
 			});
 		} else {
+			const context = has_changes
+				? "Running checks"
+				: "Skipped — No changes detected";
+			const result = has_changes ? "pending" : "success";
 			create_commit_status(
 				octokit,
 				sha,
-				has_changes ? "pending" : "success",
+				mergeable === "true" ? result : "failure",
 				_workflow_name,
-				has_changes ? "Running checks" : "Skipped — No changes detected",
+				mergeable === "true"
+					? context
+					: "Cannot check out PR as it is not mergeable",
 				workflow_run.data.html_url,
 			);
 		}

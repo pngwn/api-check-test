@@ -11498,6 +11498,7 @@ async function run() {
   const changes = (0, import_core.getInput)("changes") || "[]";
   const type = (0, import_core.getInput)("type");
   const job_id = (0, import_core.getInput)("job_id");
+  const mergeable = (0, import_core.getInput)("mergeable");
   console.log({ token, pr, sha, job_id });
   const octokit = (0, import_github.getOctokit)(token);
   console.log(import_github.context);
@@ -11513,23 +11514,27 @@ async function run() {
   if (init === "true") {
     const has_changes = JSON.parse(changes).includes(type) || type == "all";
     if (type == "gradio" || type == "python-client") {
+      const context2 = has_changes ? "Running checks" : "Skipped \u2014 No changes detected";
+      const result2 = has_changes ? "pending" : "success";
       ["3.8", "3.10"].forEach((version2) => {
         create_commit_status(
           octokit,
           sha,
-          has_changes ? "pending" : "success",
+          mergeable === "true" ? result2 : "failure",
           `test / ${type == "gradio" ? "" : "client / "}python ${version2} `,
-          has_changes ? "Running checks" : "Skipped \u2014 No changes detected",
+          mergeable === "true" ? context2 : "Cannot check out PR as it is not mergeable",
           workflow_run.data.html_url
         );
       });
     } else {
+      const context2 = has_changes ? "Running checks" : "Skipped \u2014 No changes detected";
+      const result2 = has_changes ? "pending" : "success";
       create_commit_status(
         octokit,
         sha,
-        has_changes ? "pending" : "success",
+        mergeable === "true" ? result2 : "failure",
         _workflow_name,
-        has_changes ? "Running checks" : "Skipped \u2014 No changes detected",
+        mergeable === "true" ? context2 : "Cannot check out PR as it is not mergeable",
         workflow_run.data.html_url
       );
     }

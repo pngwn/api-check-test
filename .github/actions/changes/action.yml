@@ -16,7 +16,7 @@ outputs:
     description: "PR number"
     value: ${{ steps.pr.outputs.pr_number }}
   sha:
-    description: "SHA of the commit to create the check on"
+    description: "SHA of the HEAD commit of the PR"
     value: ${{ steps.pr.outputs.sha }}
   source_repo:
     description: "Source repo"
@@ -24,6 +24,12 @@ outputs:
   source_branch:
     description: "Source branch"
     value: ${{ steps.pr.outputs.source_branch }}
+  merge_sha:
+    description: "SHA of the merged result preview branch"
+    value: ${{ steps.merge.outputs.merge_sha }}
+  mergeable:
+    description: "Whether the PR is mergeable"
+    value: ${{ steps.merge.outputs.mergeable }}
 
 runs:
   using: "composite"
@@ -46,6 +52,12 @@ runs:
     - run: echo "${{ steps.pr.outputs.sha }}"
       shell: bash
     - run: echo "${{ steps.pr.outputs.pr_number }}"
+      shell: bash
+    - run: echo "${{ steps.pr.outputs.source_repo }}"
+      shell: bash
+    - run: echo "${{ steps.pr.outputs.merge_sha }}"
+      shell: bash
+    - run: echo "${{ steps.pr.outputs.mergeable }}"
       shell: bash
 
     - uses: dorny/paths-filter@v2
@@ -122,6 +134,8 @@ runs:
       if: ${{ inputs.type == 'website' }}
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.website == 'true' }}" >> $GITHUB_ENV
+    - if: ${{ steps.pr.outputs.mergeable == 'false' }}
+      run: echo "SHOULD_RUN=false" >> $GITHUB_ENV
     - name: set output
       id: should_run
       shell: bash
@@ -135,3 +149,4 @@ runs:
         changes: ${{ steps.changes.outputs.changes }}
         type: ${{ inputs.type }}
         init: true
+        mergeable: ${{ steps.pr.outputs.mergeable }}
