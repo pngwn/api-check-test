@@ -109,14 +109,18 @@ runs:
       if: ${{ inputs.type == 'visual' }}
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.visual == 'true' }}" >> $GITHUB_ENV
-    - name: set env (all)
+    - name: set end (all)
+      if: ${{ inputs.type == 'all' }}
+      shell: bash
+      run: echo "SHOULD_RUN=true" >> $GITHUB_ENV
+    - name: set env no_pr
       if: ${{ steps.pr.outputs.found_pr != 'true' && steps.changes.outputs.source_branch != 'main' }}
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.pr.outputs.found_pr != 'true' }}" >> $GITHUB_ENV
     - name: set output
       id: should_run
       shell: bash
-      run: echo "::set-output name=should_run::${{ env.SHOULD_RUN }}"
+      run: echo "should_run=${{ env.SHOULD_RUN }}" >> $GITHUB_OUTPUT
     - uses: "./.github/actions/do-check"
       with:
         token: ${{ inputs.token }}
