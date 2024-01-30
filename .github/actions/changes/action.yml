@@ -113,10 +113,6 @@ runs:
       if: ${{ inputs.type == 'all' }}
       shell: bash
       run: echo "SHOULD_RUN=true" >> $GITHUB_ENV
-    - name: set env no_pr
-      if: ${{ steps.pr.outputs.found_pr != 'true' && steps.changes.outputs.source_branch != 'main' }}
-      shell: bash
-      run: echo "SHOULD_RUN=${{ steps.pr.outputs.found_pr != 'true' }}" >> $GITHUB_ENV
     - name: set output
       id: should_run
       shell: bash
