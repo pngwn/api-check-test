@@ -36,6 +36,9 @@ outputs:
   mergeable:
     description: "Whether the PR is mergeable"
     value: ${{ steps.merge.outputs.mergeable }}
+  labels:
+    description: "Labels on the PR"
+    value: ${{ steps.pr.outputs.labels }}
 
 runs:
   using: "composite"
