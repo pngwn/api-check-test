@@ -140,7 +140,7 @@ runs:
       id: should_run
       shell: bash
       run: echo "should_run=${{ env.SHOULD_RUN }}" >> $GITHUB_OUTPUT
-    - uses: "gradio-app/github/actions/commit-statusr@main"
+    - uses: "gradio-app/github/actions/commit-status@main"
       with:
         token: ${{ inputs.token }}
         pr: ${{ steps.pr.outputs.pr_number }}
