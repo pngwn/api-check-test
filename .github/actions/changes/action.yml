@@ -8,6 +8,9 @@ inputs:
   token:
     description: "Github token"
     required: true
+  name:
+    description: "Check name"
+    default: "false"
 outputs:
   should_run:
     description: "Whether to run the workflow"
@@ -53,7 +56,7 @@ runs:
       shell: bash
     - run: echo "PR_NUMBER? ${{ steps.pr.outputs.pr_number }}"
       shell: bash
-    - run: echo "$SOURCE_REPO? {{ steps.pr.outputs.source_repo }}"
+    - run: echo "$SOURCE_REPO? ${{ steps.pr.outputs.source_repo }}"
       shell: bash
     - run: echo "MERGE_SHA? ${{ steps.pr.outputs.merge_sha }}"
       shell: bash
