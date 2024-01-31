@@ -39,6 +39,9 @@ outputs:
   labels:
     description: "Labels on the PR"
     value: ${{ steps.pr.outputs.labels }}
+  found_pr:
+    description: "Whether a PR was found"
+    value: ${{ steps.pr.outputs.found_pr }}
 
 runs:
   using: "composite"
