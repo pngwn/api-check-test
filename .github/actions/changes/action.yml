@@ -133,7 +133,7 @@ runs:
       if: ${{ inputs.type == 'website' }}
       shell: bash
       run: echo "SHOULD_RUN=${{ steps.changes.outputs.website == 'true' }}" >> $GITHUB_ENV
-    - if: ${{ steps.pr.outputs.mergeable == 'false' }}
+    - if: ${{ steps.pr.outputs.mergeable == 'false' && steps.pr.outputs.source_branch != 'main' }}
       run: echo "SHOULD_RUN=false" >> $GITHUB_ENV
       shell: bash
     - name: set output
