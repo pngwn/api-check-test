@@ -11,6 +11,9 @@ inputs:
   name:
     description: "Check name"
     default: "false"
+  commit_status:
+    description: "Whether to create a commit status"
+    default: "true"
 outputs:
   should_run:
     description: "Whether to run the workflow"
@@ -153,3 +156,4 @@ runs:
         type: ${{ inputs.type }}
         init: true
         mergeable: ${{ steps.pr.outputs.source_branch == 'main' || steps.pr.outputs.mergeable }}
+        commit_status: ${{ inputs.commit_status }}
