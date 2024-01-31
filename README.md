@@ -7,5 +7,3 @@ asd
 asd
 
 asd
-
-asd
