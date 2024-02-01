@@ -11,14 +11,22 @@ async function run() {
 	const changes = getInput("changes") || "[]";
 	const type = getInput("type");
 	const job_id = getInput("job_id");
+	const mergeable = getInput("mergeable");
 
-	console.log({ token, pr, sha, job_id });
+	console.log({
+		token,
+		pr,
+		sha,
+		result,
+		name,
+		init,
+		changes,
+		type,
+		job_id,
+		mergeable,
+	});
 	const octokit = getOctokit(token);
 
-	console.log(context);
-
-	console.log(JSON.stringify(JSON.parse(changes), null, 2));
-	console.log({ type });
 	let _workflow_name = name || context.workflow || "Unknown Workflow";
 
 	const workflow_run = await octokit.rest.actions.getWorkflowRun({
@@ -26,29 +34,41 @@ async function run() {
 		repo: context.repo.repo,
 		run_id: context.runId,
 	});
-	console.log({ workflow_run });
 
 	if (init === "true") {
 		const has_changes = JSON.parse(changes).includes(type) || type == "all";
 
 		if (type == "gradio" || type == "python-client") {
+			const context = has_changes
+				? "Running checks"
+				: "Skipped — No changes detected";
+			const result = has_changes ? "pending" : "success";
+
 			["3.8", "3.10"].forEach((version) => {
 				create_commit_status(
 					octokit,
 					sha,
-					has_changes ? "pending" : "success",
+					mergeable === "true" ? result : "failure",
 					`test / ${type == "gradio" ? "" : "client / "}python ${version} `,
-					has_changes ? "Running checks" : "Skipped — No changes detected",
+					mergeable === "true"
+						? context
+						: "Cannot check out PR as it is not mergeable",
 					workflow_run.data.html_url,
 				);
 			});
 		} else {
+			const context = has_changes
+				? "Running checks"
+				: "Skipped — No changes detected";
+			const result = has_changes ? "pending" : "success";
 			create_commit_status(
 				octokit,
 				sha,
-				has_changes ? "pending" : "success",
+				mergeable === "true" ? result : "failure",
 				_workflow_name,
-				has_changes ? "Running checks" : "Skipped — No changes detected",
+				mergeable === "true"
+					? context
+					: "Cannot check out PR as it is not mergeable",
 				workflow_run.data.html_url,
 			);
 		}
@@ -90,15 +110,12 @@ async function run() {
 		console.log(error);
 	}
 
-	console.log(JSON.stringify(jobs, null, 2));
-
 	const { html_url, started_at } = jobs?.data.jobs.find(
 		(job) => job.name === job_id,
 	) || { html_url: null, created_at: null };
 
 	const current = new Date().toISOString();
 
-	console.log({ started_at: started_at && new Date(started_at), current });
 	const duration = started_at
 		? `${state === "success" ? "Successful in" : "Failed after"} ${get_duration(
 				current,
