@@ -32,6 +32,8 @@ jobs:
 
     if: needs.changes.outputs.should_run == 'true'
     steps:
+      - name: echo concurrency group
+        run: echo "${{ github.event.workflow_run.event}}-${{ github.event.workflow_run.head_branch}}"
       - name: echo github context
         run: echo "${{ toJson(github) }}"
       - uses: actions/checkout@v3
