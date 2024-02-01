@@ -10,4 +10,7 @@ jobs:
     name: workflows
     runs-on: ubuntu-22.04
     steps:
+      - name: echo context as formatted json
+        run: echo '${{ toJson(github) }}'
+
       - run: echo "Hello, github!"

@@ -32,6 +32,8 @@ jobs:
 
     if: needs.changes.outputs.should_run == 'true'
     steps:
+      - name: echo github context
+        run: echo "${{ toJson(github) }}"
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.changes.outputs.source_branch }}
