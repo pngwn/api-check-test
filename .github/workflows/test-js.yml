@@ -26,6 +26,9 @@ jobs:
           type: "js"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: check for labels and save to output
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.changes.outputs.found_pr == 'true'
         run: echo "run_windows=$(gh pr view ${{ steps.changes.outputs.pr_number }} --json labels --jq '.labels | map(.name) | contains(["bug"])')" >> $GITHUB_OUTPUT
         id: check-labels
       - name: print output
