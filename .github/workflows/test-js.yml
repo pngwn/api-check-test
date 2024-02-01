@@ -17,6 +17,7 @@ jobs:
       pr_number: ${{ steps.changes.outputs.pr_number }}
       source_branch: ${{ steps.changes.outputs.source_branch }}
       source_repo: ${{ steps.changes.outputs.source_repo }}
+      run_windows: ${{ steps.check-labels.outputs.run_windows }}
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/changes
@@ -24,6 +25,14 @@ jobs:
         with:
           type: "js"
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: check for labels and save to output
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.changes.outputs.found_pr == 'true'
+        run: echo "run_windows=$(gh pr view ${{ steps.changes.outputs.pr_number }} --json labels --jq '.labels | map(.name) | contains(["bug"])')" >> $GITHUB_OUTPUT
+        id: check-labels
+      - name: print output
+        run: echo "${{ toJson(steps) }}"
 
   test-js:
     name: "test-js"
